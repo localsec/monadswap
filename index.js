@@ -570,7 +570,7 @@ function addTransactionToQueue(transactionFunction, description = "Giao dịch")
     timestamp: new Date().toLocaleTimeString(),
     status: "queued"
   });
-  addLog(`Giao dịch [${transactionId}] ditambahkan ke antrean: ${description}`, "system");
+  addLog(`Giao dịch [${transactionId}] đã thêm ke antrean: ${description}`, "system");
   updateQueueDisplay();
 
   transactionQueue = transactionQueue.then(async () => {
