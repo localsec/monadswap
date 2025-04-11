@@ -1532,25 +1532,8 @@ addLog("Hoán đổi Hedge: Tự động hoán đổi hoàn tất.", "hedgemony"
 }
 
 
-async function runHedgemonySwap() {
-  promptBox.setFront();
-  promptBox.readInput("Nhập số lượng hoán đổi Hedgemony:", "", async (err, value) => {
-    promptBox.hide();
-    screen.render();
-    if (err || !value) {
-      addLog("Hedgemony: Dữ liệu nhập không hợp lệ hoặc bị hủy.", "hedgemony");
-      return;
-    }
-    const loopCount = parseInt(value);
-    if (isNaN(loopCount) || loopCount <= 0) {
-      addLog("Hedgemony: Dữ liệu nhập không hợp lệ. Phải là số dương.", "hedgemony");
-      return;
-    }
-    if (hedgemonySwapRunning) {
-      addLog("Hedgemony: Giao dịch đang chạy. Vui lòng dừng giao dịch trước.", "hedgemony");
-      return;
-    }
-    hedgemonySwapRunning = true;
+
+hedgemonySwapRunning = true;
     hedgemonySwapCancelled = false;
     mainMenu.setItems(getMainMenuItems());
     hedgemonySubMenu.setItems(getHedgemonyMenuItems());
