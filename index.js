@@ -1313,10 +1313,10 @@ async function runHedgeSwap() {
       const swapToHEDGE = (i % 2 === 1);
       if (swapToHEDGE) {
         amountBN = getRandomAmountMonToHedge();
-        addLog(`Hedge Swap: Cycle ${i}: Sẽ swap MON -> HEDGE sebesar ${ethers.formatEther(amountBN)} MON`, "hedgemony");
+        addLog(`Hedge Swap: Cycle ${i}: Sẽ swap MON -> HEDGE số lượng ${ethers.formatEther(amountBN)} MON`, "hedgemony");
       } else {
         amountBN = getRandomAmountHedgeToMon();
-        addLog(`Hedge Swap: Cycle ${i}: Sẽ swap HEDGE -> MON sebesar ${ethers.formatUnits(amountBN, 18)} HEDGE`, "hedgemony");
+        addLog(`Hedge Swap: Cycle ${i}: Sẽ swap HEDGE -> MON số lượng ${ethers.formatUnits(amountBN, 18)} HEDGE`, "hedgemony");
         const hedgeContract = new ethers.Contract(HEDGE_ADDRESS, ERC20_ABI_APPROVE, globalWallet);
         const hedgeBalance = await hedgeContract.balanceOf(globalWallet.address);
         if (hedgeBalance < amountBN) {
@@ -1452,7 +1452,7 @@ async function runHedgemonySwap() {
       const amountStr = amountBN.toString();
       if (!swapToWMON) {
         const wmonBalance = await wmonContract.balanceOf(globalWallet.address);
-        addLog(`Hedgemony: Sẽ swap WMON ➯ MON sebesar ${ethers.formatEther(amountBN)}`, "hedgemony");
+        addLog(`Hedgemony: Sẽ swap WMON ➯ MON số lượng ${ethers.formatEther(amountBN)}`, "hedgemony");
         if (wmonBalance < amountBN) {
           addLog(`Hedgemony: Cân bằng WMON không đủ. Skip Lặp lại ${i}.`, "hedgemony");
           continue;
@@ -1466,7 +1466,7 @@ async function runHedgemonySwap() {
           addLog("Hedgemony: Approval thành công.", "hedgemony");
         }
       } else {
-        addLog(`Hedgemony: Sẽ swap MON ➯ WMON sebesar ${ethers.formatEther(amountBN)}`, "hedgemony");
+        addLog(`Hedgemony: Sẽ swap MON ➯ WMON số lượng ${ethers.formatEther(amountBN)}`, "hedgemony");
       }
       let payload;
       if (swapToWMON) {
