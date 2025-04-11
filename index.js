@@ -36,6 +36,7 @@ const bubbleFiTokens = [
   { address: TOKEN_MYK,  name: "MYK" }
 ];
 
+
 const ERC20_ABI = ["function balanceOf(address owner) view returns (uint256)"];
 const ROUTER_ABI = ["function deposit() payable", "function withdraw(uint256 amount)"];
 const ERC20_ABI_APPROVE = [
@@ -105,13 +106,15 @@ const BUBBLEFI_ROUTER_ABI = [
   }
 ];
 
+
+
 let walletInfo = {
   address: "",
   balanceMON: "0.00",
   balanceWMON: "0.00",
   balanceHEDGE: "0.00",
   balanceWETH: "0.00",
-  balanceHEDGE: "0.00",
+balanceHEDGE: "0.00",
   balanceUSDC: "0.00",
   network: "Monad Testnet",
   status: "Initializing"
@@ -194,62 +197,63 @@ function getRandomAmountHedgeToMon() {
   return ethers.parseUnits(randomInt.toString(), 18);
 }
 
-// Số lượng ngẫu nhiên Monda cho Dak -> Mon
-function getRandomAmountDakForSwap() {
-  const min = 0.3, max = 4;
-  const randomVal = Math.random() * (max - min) + min;
-  return ethers.parseUnits(randomVal.toFixed(6), 18);
-}
+// Random Ammount Monda untuk  Dak -> Mon
+  function getRandomAmountDakForSwap() {
+    const min = 0.3, max = 4;
+    const randomVal = Math.random() * (max - min) + min;
+    return ethers.parseUnits(randomVal.toFixed(6), 18);
+  }
 
-// Số lượng ngẫu nhiên Monda cho Mon -> Dak
-function getRandomAmountMonForSwap() {
-  const min = 0.1, max = 1;
-  const randomVal = Math.random() * (max - min) + min;
-  return ethers.parseUnits(randomVal.toFixed(6), 18);
-}
+// Random Ammount Monda untuk  Mon -> Dak
+ function getRandomAmountMonForSwap() {
+    const min = 0.1, max = 1;
+    const randomVal = Math.random() * (max - min) + min;
+    return ethers.parseUnits(randomVal.toFixed(6), 18);
+  }
 
-// Số lượng ngẫu nhiên Monda cho Mon -> USDC/USDT
+// Random Ammount Monda untuk Mon -> usdc/usdt 
 function getRandomAmountMonForUsdcUsdt() {
-  const min = 1, max = 4;
-  const randomVal = Math.random() * (max - min) + min;
-  return ethers.parseEther(randomVal.toFixed(6));
-}
+    const min = 1 , max = 4;
+    const randomVal = Math.random() * (max - min) + min;
+    return ethers.parseEther(randomVal.toFixed(6)); 
+  }
 
-// Số lượng ngẫu nhiên Monda cho USDC -> Mon
-function getRandomAmountUsdcForSwap() {
-  const min = 10, max = 43;
-  const randomVal = Math.random() * (max - min) + min;
-  return ethers.parseUnits(randomVal.toFixed(6), 6);
-}
+// Random Ammount Monda untuk usdc -> Mon
+  function getRandomAmountUsdcForSwap() {
+    const min = 10, max = 43 ;
+    const randomVal = Math.random() * (max - min) + min;
+    return ethers.parseUnits(randomVal.toFixed(6), 6);
+  }
 
-// Số lượng ngẫu nhiên Monda cho USDT -> Mon
-function getRandomAmountUsdtForSwap() {
-  const min = 11, max = 43;
-  const randomVal = Math.random() * (max - min) + min;
-  return ethers.parseUnits(randomVal.toFixed(6), 6);
-}
+  // Random Ammount Monda untuk usdt -> Mon
+  function getRandomAmountUsdtForSwap() {
+    const min = 11, max = 43;
+    const randomVal = Math.random() * (max - min) + min;
+    return ethers.parseUnits(randomVal.toFixed(6), 6); 
+  }
 
-// Số lượng ngẫu nhiên BubbleFi PEPE - MLDK - MYK
-function getRandomAmountBubbleFi() {
-  const min = 5;
-  const max = 15;
-  const randomVal = Math.random() * (max - min) + min;
-  return ethers.parseUnits(randomVal.toFixed(6), 18);
-}
-
+// Random Ammount Bubblefi PEPE - MLDK - MYK
+  function getRandomAmountBubbleFi() {
+    const min = 5;
+    const max = 15;
+    const randomVal = Math.random() * (max - min) + min;
+    return ethers.parseUnits(randomVal.toFixed(6), 18);
+  }
+  
+    
 function addLog(message, type) {
   const timestamp = new Date().toLocaleTimeString();
   let coloredMessage = message;
   if (type === "rubic") {
-    coloredMessage = `{bright-cyan-fg}${message}{/bright-cyan-fg}`; // Nhật ký Rubic màu xanh lam sáng
+    coloredMessage = `{bright-cyan-fg}${message}{/bright-cyan-fg}`;
   } else if (type === "taya") {
-    coloredMessage = `{bright-yellow-fg}${message}{/bright-yellow-fg}`; // Nhật ký Taya màu vàng sáng
+    coloredMessage = `{bright-yellow-fg}${message}{/bright-yellow-fg}`;
   } else if (type === "hedgemony") {
-    coloredMessage = `{bright-magenta-fg}${message}{/bright-magenta-fg}`; // Nhật ký Hedgemony màu hồng sáng
+    coloredMessage = `{bright-magenta-fg}${message}{/bright-magenta-fg}`;
   } else if (type === "monda") {
-    coloredMessage = `{bright-blue-fg}${message}{/bright-blue-fg}`; // Nhật ký Monda màu xanh dương sáng
+    coloredMessage = `{bright-blue-fg}${message}{/bright-blue-fg}`;
   } else if (type === "bubblefi") {
-    coloredMessage = `{bright-green-fg}${message}{/bright-green-fg}`; // Nhật ký BubbleFi màu xanh lá sáng
+    coloredMessage = `{bright-green-fg}${message}{/bright-green-fg}`;
   }
   transactionLogs.push(`[ {bold}{grey-fg}${timestamp}{/grey-fg}{/bold} ] ${coloredMessage}`);
   updateLogs();
@@ -260,11 +264,10 @@ function updateLogs() {
   logsBox.setScrollPerc(100);
   safeRender();
 }
-
 function clearTransactionLogs() {
   transactionLogs = [];
   updateLogs();
-  addLog("Nhật ký giao dịch đã được xóa.", "hệ thống");
+  addLog("Transaction logs telah dihapus.", "system");
 }
 
 const screen = blessed.screen({
@@ -273,13 +276,11 @@ const screen = blessed.screen({
   fullUnicode: true,
   mouse: true
 });
-
 let renderTimeout;
 function safeRender() {
   if (renderTimeout) clearTimeout(renderTimeout);
   renderTimeout = setTimeout(() => { screen.render(); }, 50);
 }
-
 const headerBox = blessed.box({
   top: 0,
   left: "center",
@@ -287,23 +288,20 @@ const headerBox = blessed.box({
   tags: true,
   style: { fg: "white", bg: "default" }
 });
-
 figlet.text("NT Exhaust".toUpperCase(), { font: "Speed", horizontalLayout: "default" }, (err, data) => {
-  if (err) headerBox.setContent("{center}{bold}HOÁN ĐỔI TỰ ĐỘNG MONAD{/bold}{/center}");
+  if (err) headerBox.setContent("{center}{bold}MONAD AUTO SWAP{/bold}{/center}");
   else headerBox.setContent(`{center}{bold}{bright-cyan-fg}${data}{/bright-cyan-fg}{/bold}{/center}`);
   safeRender();
 });
-
 const descriptionBox = blessed.box({
   left: "center",
   width: "100%",
-  content: "{center}{bold}{bright-cyan-fg}➕➕➕➕ HOÁN ĐỔI TỰ ĐỘNG MONAD ➕➕➕➕{/bright-cyan-fg}{/bold}{/center}",
+  content: "{center}{bold}{bright-cyan-fg}➕➕➕➕ MONAD AUTO SWAP ➕➕➕➕{/bright-cyan-fg}{/bold}{/center}",
   tags: true,
   style: { fg: "white", bg: "default" }
 });
-// Khởi tạo hộp nhật ký giao dịch
 const logsBox = blessed.box({
-  label: " Nhật ký giao dịch ",
+  label: " Transaction Logs ",
   left: 0,
   border: { type: "line" },
   scrollable: true,
@@ -316,10 +314,8 @@ const logsBox = blessed.box({
   content: "",
   style: { border: { fg: "bright-red" }, bg: "default" }
 });
-
-// Khởi tạo hộp thông tin ví
 const walletBox = blessed.box({
-  label: " Thông tin ví ",
+  label: " Informasi Wallet ",
   left: "60%",
   tags: true,
   border: { type: "line" },
@@ -327,7 +323,6 @@ const walletBox = blessed.box({
   content: ""
 });
 
-// Cập nhật thông tin ví
 function updateWallet() {
   const shortAddress = walletInfo.address
     ? walletInfo.address.slice(0, 6) + "..." + walletInfo.address.slice(-4)
@@ -343,10 +338,10 @@ function updateWallet() {
   const weth  = walletInfo.balanceWETH ? formatBalance(walletInfo.balanceWETH) : "0.00";
   const usdt  = walletInfo.balanceUSDT ? formatBalance(walletInfo.balanceUSDT) : "0.00";
   const usdc  = walletInfo.balanceUSDC ? formatBalance(walletInfo.balanceUSDC) : "0.00";
-  const network = walletInfo.network || "Không xác định";
+  const network = walletInfo.network || "Unknown";
 
-  const content = `Địa chỉ : {bold}{bright-cyan-fg}${shortAddress}{/bright-cyan-fg}{/bold}
-└── Mạng : {bold}{bright-yellow-fg}${network}{/bright-yellow-fg}{/bold}
+  const content = `Address : {bold}{bright-cyan-fg}${shortAddress}{/bright-cyan-fg}{/bold}
+└── Network : {bold}{bright-yellow-fg}${network}{/bright-yellow-fg}{/bold}
     ├── MON   : {bold}{bright-green-fg}${mon}{/bright-green-fg}{/bold}
     ├── WMON  : {bold}{bright-green-fg}${wmon}{/bright-green-fg}{/bold}
     ├── HEDGE : {bold}{bright-green-fg}${hedge}{/bright-green-fg}{/bold}
@@ -359,7 +354,6 @@ function updateWallet() {
   safeRender();
 }
 
-// Dừng tất cả giao dịch
 function stopAllTransactions() {
   if (autoSwapRunning || tayaSwapRunning || hedgemonySwapRunning || mondaSwapRunning) {
     autoSwapCancelled = true;
@@ -367,53 +361,48 @@ function stopAllTransactions() {
     hedgemonySwapCancelled = true;
     mondaSwapCancelled = true;
     bubbleFiSwapCancelled = true;
-    addLog("Lệnh dừng tất cả giao dịch đã được nhận. Tất cả giao dịch đã bị dừng.", "hệ thống");
+    addLog("Stop All Transactions command received. Semua transaksi telah dihentikan.", "system");
+
   }
 }
 
-// Lấy danh sách mục menu Rubic
+
 function getRubicMenuItems() {
   return autoSwapRunning
-    ? ["Hoán đổi tự động Mon & WMON", "Dừng giao dịch", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"]
-    : ["Hoán đổi tự động Mon & WMON", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"];
+    ? ["Auto Swap Mon & WMON", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
+    : ["Auto Swap Mon & WMON", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
 }
-
-// Lấy danh sách mục menu Taya
 function getTayaMenuItems() {
   return tayaSwapRunning
-    ? ["Hoán đổi tự động token ngẫu nhiên", "Hoán đổi tự động MON & WMON", "Dừng giao dịch", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"]
-    : ["Hoán đổi tự động token ngẫu nhiên", "Hoán đổi tự động MON & WMON", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"];
+    ? ["Auto Swap Random Token", "Auto Swap MON & WMON", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
+    : ["Auto Swap Random Token", "Auto Swap MON & WMON", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
 }
-
-// Lấy danh sách mục menu Hedgemony
 function getHedgemonyMenuItems() {
   return hedgemonySwapRunning
-    ? ["Hoán đổi tự động Mon & WMON", "Hoán đổi tự động Mon & HEDGE", "Dừng giao dịch", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"]
-    : ["Hoán đổi tự động Mon & WMON", "Hoán đổi tự động Mon & HEDGE", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"];
+    ? ["Auto Swap Mon & WMON", "Auto Swap Mon & HEDGE", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
+    : ["Auto Swap Mon & WMON", "Auto Swap Mon & HEDGE", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
 }
-
-// Lấy danh sách mục menu Monda
 function getMondaMenuItems() {
-  return mondaSwapRunning
-    ? ["Hoán đổi tự động Mon & Dak", "Hoán đổi tự động Mon & USDC/USDT", "{grey-fg}Hoán đổi tự động Mon & Monda [SẮP RA MẮT]{/grey-fg}", "Dừng giao dịch", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"]
-    : ["Hoán đổi tự động Mon & Dak", "Hoán đổi tự động Mon & USDC/USDT", "{grey-fg}Hoán đổi tự động Mon & Monda [SẮP RA MẮT]{/grey-fg}", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"];
-}
-
-// Lấy danh sách mục menu BubbleFi
-function getBubbleFiMenuItems() {
-  return bubbleFiSwapRunning
-    ? ["Hoán đổi tự động Pepe & Mldk & Myk", "Dừng giao dịch", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"]
-    : ["Hoán đổi tự động Pepe & Mldk & Myk", "Xóa nhật ký giao dịch", "Quay lại menu chính", "Thoát"];
-}
-
-// Lấy danh sách mục menu chính
-function getMainMenuItems() {
-  let items = ["Hoán đổi Rubic", "Hoán đổi Taya", "Hoán đổi Hedgemony", "Hoán đổi Monda", "Hoán đổi BubbleFi", "Hàng đợi giao dịch", "Xóa nhật ký giao dịch", "Làm mới", "Thoát"];
-  if (autoSwapRunning || tayaSwapRunning || hedgemonySwapRunning || mondaSwapRunning || bubbleFiSwapRunning) {
-    items.unshift("Dừng tất cả giao dịch");
+    return mondaSwapRunning
+      ? ["Auto Swap Mon & Dak", "Auto Swap Mon & USDC/USDT", "{grey-fg}Auto Swap Mon & Monda [COMING SOON]{/grey-fg}", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
+      : ["Auto Swap Mon & Dak", "Auto Swap Mon & USDC/USDT", "{grey-fg}Auto Swap Mon & Monda [COMING SOON]{/grey-fg}", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
   }
-  return items;
-}
+function getBubbleFiMenuItems() {
+    return bubbleFiSwapRunning
+      ? ["Auto Swap Pepe & Mldk & Myk", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
+      : ["Auto Swap Pepe & Mldk & Myk", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
+  }
+
+
+
+function getMainMenuItems() {
+    let items = ["Rubic Swap", "Taya Swap", "Hedgemony Swap", "Monda Swap", "BubbleFi Swap", "Antrian Transaksi", "Clear Transaction Logs", "Refresh", "Exit"];
+    if (autoSwapRunning || tayaSwapRunning || hedgemonySwapRunning || mondaSwapRunning || bubbleFiSwapRunning) {
+      items.unshift("Stop All Transactions");
+    }
+    return items;
+  }
+
 
 const mainMenu = blessed.list({
   label: " Menu ",
