@@ -1540,55 +1540,6 @@ function stopHedgemonySwap() {
   }
 }
 
-// Phần còn lại của mã (các hàm khác và sự kiện menu) giữ nguyên
-async function runMondaSwapMonDak() {
-  // ... (giữ nguyên như mã gốc)
-}
-
-async function runMondaSwapMonUsdcUsdt() {
-  // ... (giữ nguyên như mã gốc)
-}
-
-async function runMondaSwapMonMonda() {
-  // ... (giữ nguyên như mã gốc)
-}
-
-async function runBubbleFiAutoSwap() {
-  // ... (giữ nguyên như mã gốc)
-}
-
-mainMenu.on("select", (item) => {
-  // ... (giữ nguyên như mã gốc)
-});
-
-rubicSubMenu.on("select", (item) => {
-  // ... (giữ nguyên như mã gốc)
-});
-
-function showTayaSubMenu() {
-  // ... (giữ nguyên như mã gốc)
-}
-
-tayaSubMenu.on("select", (item) => {
-  // ... (giữ nguyên như mã gốc)
-});
-
-function showHedgemonySubMenu() {
-  // ... (giữ nguyên như mã gốc)
-}
-
-hedgemonySubMenu.on("select", (item) => {
-  // ... (giữ nguyên như mã gốc)
-});
-
-mondaSubMenu.on("select", (item) => {
-  // ... (giữ nguyên như mã gốc)
-});
-
-bubbleFiSubMenu.on("select", (item) => {
-  // ... (giữ nguyên như mã gốc)
-});
-
 screen.key(["C-up"], () => { logsBox.scroll(-1); safeRender(); });
 screen.key(["C-down"], () => { logsBox.scroll(1); safeRender(); });
 safeRender();
