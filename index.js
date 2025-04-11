@@ -396,7 +396,7 @@ function getBubbleFiMenuItems() {
 
 
 function getMainMenuItems() {
-    let items = ["Rubic Swap", "Taya Swap", "Hedgemony Swap", "Monda Swap", "BubbleFi Swap", "Antrian Giao dịch", "Xóa Nhật ký giao dịch", "Refresh", "Exit"];
+    let items = ["Rubic Swap", "Taya Swap", "Hedgemony Swap", "Monda Swap", "BubbleFi Swap", "Logs Giao dịch", "Xóa Nhật ký giao dịch", "Refresh", "Exit"];
     if (autoSwapRunning || tayaSwapRunning || hedgemonySwapRunning || mondaSwapRunning || bubbleFiSwapRunning) {
       items.unshift("Stop All Transactions");
     }
@@ -647,7 +647,7 @@ let queueMenuBox = null;
 let queueUpdateInterval = null;
 function showTransactionQueueMenu() {
   const container = blessed.box({
-    label: " Antrian Giao dịch ",
+    label: " Logs Giao dịch ",
     top: "10%",
     left: "center",
     width: "80%",
@@ -1908,7 +1908,7 @@ async function runBubbleFiAutoSwap() {
       userId = sessionResponse.data.user.id;
       addLog(`BubbleFi: Diperoleh session vì user id ${userId}`, "bubblefi");
     } catch (error) {
-      addLog(`BubbleFi: thất bại mendapatkan session: ${error.message}`, "bubblefi");
+      addLog(`BubbleFi: thất bại lấy session: ${error.message}`, "bubblefi");
       bubbleFiSwapRunning = false;
       return;
     }
@@ -2068,7 +2068,7 @@ mainMenu.on("select", (item) => {
       bubbleFiSubMenu.focus();
       screen.render();
     }, 100);
-  }  else if (selected === "Antrian Giao dịch") {
+  }  else if (selected === "Logs Giao dịch") {
     showTransactionQueueMenu();
   } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
