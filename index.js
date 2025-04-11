@@ -112,6 +112,7 @@ let walletInfo = {
   balanceHEDGE: "0.00",
   balanceWETH: "0.00",
   balanceUSDC: "0.00",
+  balanceUSDT: "0.00",
   network: "Mạng thử nghiệm Monad",
   status: "Đang khởi tạo"
 };
@@ -331,8 +332,8 @@ function updateWallet() {
   const wmon  = walletInfo.balanceWMON ? formatBalance(walletInfo.balanceWMON) : "0.00";
   const hedge = walletInfo.balanceHEDGE ? formatBalance(walletInfo.balanceHEDGE) : "0.00";
   const weth  = walletInfo.balanceWETH ? formatBalance(walletInfo.balanceWETH) : "0.00";
-  const usdt  = walletInfo.balanceUSDT ? formatBalance(walletInfo.balanceUSDT) : "0.00";
   const usdc  = walletInfo.balanceUSDC ? formatBalance(walletInfo.balanceUSDC) : "0.00";
+  const usdt  = walletInfo.balanceUSDT ? formatBalance(walletInfo.balanceUSDT) : "0.00";
   const network = walletInfo.network || "Không xác định";
 
   const content = `Địa chỉ : {bold}{bright-cyan-fg}${shortAddress}{/bright-cyan-fg}{/bold}
@@ -350,7 +351,7 @@ function updateWallet() {
 }
 
 function stopAllTransactions() {
-  if (autoSwapRunning || tayaSwapRunning || hedgemonySwapRunning || mondaSwapRunning) {
+  if (autoSwapRunning || tayaSwapRunning || hedgemonySwapRunning || mondaSwapRunning || bubbleFiSwapRunning) {
     autoSwapCancelled = true;
     tayaSwapCancelled = true;
     hedgemonySwapCancelled = true;
@@ -1478,6 +1479,139 @@ async function runHedgemonySwap() {
         };
       }
       try {
+      const apiResponse = await axios.post("https://alpha-api.hedgemony.xyz/swap", payload, {
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${HEDGEMONY_BEARER}`
+  }
+});
+const multicallTx = apiResponse.data.multicallTx;
+if (!multicallTx || !multicallTx.to || !multicallTx.data) {
+  addLog(`Hoán đổi Hedge: Dữ liệu giao dịch không đầy đủ.`, "hedgemony");
+} else {
+  await addTransactionToQueue(async (nonce) => {
+    const tx = await globalWallet.sendTransaction({
+      nonce: nonce,
+      to: multicallTx.to,
+      value: multicallTx.value ? BigInt(multicallTx.value) : 0n,
+      data: multicallTx.data,
+    });
+    addLog(`Hoán đổi Hedge: Giao dịch đã được gửi!! Mã giao dịch: ${getShortHash(tx.hash)}`, "hedgemony");
+    await tx.wait();
+    addLog(`Hoán đổi Hedge: Giao dịch được xác nhận!! Mã giao dịch: ${getShortHash(tx.hash)}`, "hedgemony");
+    await updateWalletData();
+    await sendHedgeTradeHistoryWithRetry(tx.hash, globalWallet, amountStr, swapToHEDGE);
+  }, "Hoán đổi Hedge");
+  addLog(`Hoán đổi Hedge: Chu kỳ ${i} hoàn tất.`, "hedgemony");
+}
+} catch (error) {
+  if (error.response && error.response.data) {
+    addLog(`Hoán đổi Hedge: Lỗi: ${JSON.stringify(error.response.data)}`, "hedgemony");
+  } else {
+    addLog(`Hoán đổi Hedge: Lỗi: ${error.message}`, "hedgemony");
+  }
+}
+if (i < loopCount) {
+  const delay = getRandomDelay();
+  const minutes = Math.floor(delay / 60000);
+  const seconds = Math.floor((delay % 60000) / 1000);
+  addLog(`Hoán đổi Hedge: Đang chờ ${minutes} phút ${seconds} giây trước chu kỳ tiếp theo...`, "hedgemony");
+  await waitWithCancel(delay, "hedgemony");
+  if (hedgemonySwapCancelled) {
+    addLog("Hoán đổi Hedge: Tự động hoán đổi bị dừng trong thời gian chờ.", "hedgemony");
+    break;
+  }
+}
+}
+hedgemonySwapRunning = false;
+hedgemonySubMenu.setItems(getHedgemonyMenuItems());
+mainMenu.setItems(getMainMenuItems());
+screen.render();
+addLog("Hoán đổi Hedge: Tự động hoán đổi hoàn tất.", "hedgemony");
+});
+}
+
+
+async function runHedgemonySwap() {
+  promptBox.setFront();
+  promptBox.readInput("Nhập số lượng hoán đổi Hedgemony:", "", async (err, value) => {
+    promptBox.hide();
+    screen.render();
+    if (err || !value) {
+      addLog("Hedgemony: Dữ liệu nhập không hợp lệ hoặc bị hủy.", "hedgemony");
+      return;
+    }
+    const loopCount = parseInt(value);
+    if (isNaN(loopCount) || loopCount <= 0) {
+      addLog("Hedgemony: Dữ liệu nhập không hợp lệ. Phải là số dương.", "hedgemony");
+      return;
+    }
+    if (hedgemonySwapRunning) {
+      addLog("Hedgemony: Giao dịch đang chạy. Vui lòng dừng giao dịch trước.", "hedgemony");
+      return;
+    }
+    hedgemonySwapRunning = true;
+    hedgemonySwapCancelled = false;
+    mainMenu.setItems(getMainMenuItems());
+    hedgemonySubMenu.setItems(getHedgemonyMenuItems());
+    hedgemonySubMenu.show();
+    hedgemonySubMenu.focus();
+    screen.render();
+    addLog(`Hedgemony: Bắt đầu tự động hoán đổi với ${loopCount} lần.`, "hedgemony");
+    const wmonContract = new ethers.Contract(WMON_ADDRESS, ERC20_ABI_APPROVE, globalWallet);
+    for (let i = 1; i <= loopCount; i++) {
+      if (hedgemonySwapCancelled) {
+        addLog(`Hedgemony: Tự động hoán đổi bị dừng tại vòng lặp ${i}.`, "hedgemony");
+        break;
+      }
+      const swapToWMON = (i % 2 === 1);
+      const amountBN = getRandomAmountHedgemony();
+      const amountStr = amountBN.toString();
+      if (!swapToWMON) {
+        const wmonBalance = await wmonContract.balanceOf(globalWallet.address);
+        addLog(`Hedgemony: Sẽ hoán đổi WMON ➯ MON với số lượng ${ethers.formatEther(amountBN)}`, "hedgemony");
+        if (wmonBalance < amountBN) {
+          addLog(`Hedgemony: Số dư WMON không đủ. Bỏ qua vòng lặp ${i}.`, "hedgemony");
+          continue;
+        }
+        const currentAllowance = await wmonContract.allowance(globalWallet.address, HEDGEMONY_SWAP_CONTRACT);
+        if (currentAllowance < amountBN) {
+          addLog("Hedgemony: Phê duyệt WMON không đủ, đang thực hiện phê duyệt...", "hedgemony");
+          const approveTx = await wmonContract.approve(HEDGEMONY_SWAP_CONTRACT, ethers.MaxUint256);
+          addLog(`Hedgemony: Giao dịch phê duyệt đã được gửi: ${getShortHash(approveTx.hash)}`, "hedgemony");
+          await approveTx.wait();
+          addLog("Hedgemony: Phê duyệt thành công.", "hedgemony");
+        }
+      } else {
+        addLog(`Hedgemony: Sẽ hoán đổi MON ➯ WMON với số lượng ${ethers.formatEther(amountBN)}`, "hedgemony");
+      }
+      let payload;
+      if (swapToWMON) {
+        payload = {
+          chainId: 10143,
+          inputTokens: [
+            { address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", amount: amountStr }
+          ],
+          outputTokens: [
+            { address: WMON_ADDRESS, percent: 100 }
+          ],
+          recipient: globalWallet.address,
+          slippage: 0.5
+        };
+      } else {
+        payload = {
+          chainId: 10143,
+          inputTokens: [
+            { address: WMON_ADDRESS, amount: amountStr }
+          ],
+          outputTokens: [
+            { address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", percent: 100 }
+          ],
+          recipient: globalWallet.address,
+          slippage: 0.5
+        };
+      }
+      try {
         const apiResponse = await axios.post("https://alpha-api.hedgemony.xyz/swap", payload, {
           headers: {
             "Content-Type": "application/json",
@@ -1488,4 +1622,729 @@ async function runHedgemonySwap() {
         if (!multicallTx || !multicallTx.to || !multicallTx.data) {
           addLog(`Hedgemony: Dữ liệu giao dịch không đầy đủ.`, "hedgemony");
         } else {
-          await addTransactionTo
+          await addTransactionToQueue(async (nonce) => {
+            const tx = await globalWallet.sendTransaction({
+              nonce: nonce,
+              to: multicallTx.to,
+              value: multicallTx.value || 0,
+              data: multicallTx.data,
+            });
+            addLog(`Hedgemony: Giao dịch đã được gửi!! Mã giao dịch: ${getShortHash(tx.hash)}`, "hedgemony");
+            await tx.wait();
+            addLog(`Hedgemony: Giao dịch được xác nhận!! Mã giao dịch: ${getShortHash(tx.hash)}`, "hedgemony");
+            await sendTradeHistoryWithRetry(tx.hash, globalWallet, amountStr, swapToWMON);
+            await updateWalletData();
+          }, "Hoán đổi Hedgemony");
+          addLog(`Hedgemony: ${i}/${loopCount} Hoán đổi hoàn tất.`, "hedgemony");
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          addLog(`Hedgemony: Lỗi: ${JSON.stringify(error.response.data)}`, "hedgemony");
+        } else {
+          addLog(`Hedgemony: Lỗi: ${error.message}`, "hedgemony");
+        }
+      }
+      if (i < loopCount) {
+        const delay = getRandomDelay();
+        const minutes = Math.floor(delay / 60000);
+        const seconds = Math.floor((delay % 60000) / 1000);
+        addLog(`HedgemonySwap: Đang chờ ${minutes} phút ${seconds} giây trước giao dịch tiếp theo...`, "hedgemony");
+        await waitWithCancel(delay, "hedgemony");
+        if (hedgemonySwapCancelled) {
+          addLog("Hedgemony: Tự động hoán đổi bị dừng trong thời gian chờ.", "hedgemony");
+          break;
+        }
+      }
+    }
+    hedgemonySwapRunning = false;
+    hedgemonySubMenu.setItems(getHedgemonyMenuItems());
+    mainMenu.setItems(getMainMenuItems());
+    screen.render();
+    addLog("Hedgemony: Tự động hoán đổi hoàn tất.", "hedgemony");
+  });
+}
+function stopHedgemonySwap() {
+  if (hedgemonySwapRunning) {
+    hedgemonySwapCancelled = true;
+    addLog("Hedgemony: Lệnh dừng giao dịch đã được nhận.", "hedgemony");
+  } else {
+    addLog("Hedgemony: Không có giao dịch nào đang chạy.", "hedgemony");
+  }
+}
+
+async function runMondaSwapMonDak() {
+    promptBox.setFront();
+    promptBox.readInput("Nhập số lượng chu kỳ cho hoán đổi MON & DAK:", "", async (err, value) => {
+      promptBox.hide();
+      mondaSubMenu.show();
+      mondaSubMenu.focus();
+      screen.render();
+      if (err || !value) {
+        addLog("MondaSwap: Dữ liệu nhập không hợp lệ hoặc bị hủy.", "monda");
+        return;
+      }
+      const loopCount = parseInt(value);
+      if (isNaN(loopCount)) {
+        addLog("MondaSwap: Dữ liệu nhập không hợp lệ. Phải là số.", "monda");
+        return;
+      }
+      addLog(`MondaSwap: Bạn đã nhập ${loopCount} chu kỳ cho hoán đổi MON & DAK.`, "monda");
+      if (mondaSwapRunning) {
+        addLog("MondaSwap: Giao dịch đang chạy. Vui lòng dừng giao dịch trước.", "monda");
+        return;
+      }
+      mondaSwapRunning = true;
+      mondaSwapCancelled = false;
+      mainMenu.setItems(getMainMenuItems());
+      mondaSubMenu.setItems(getMondaMenuItems());
+      mondaSubMenu.show();
+      mondaSubMenu.focus();
+      screen.render();
+      const mondaRouter = new ethers.Contract(
+        "0xc80585f78A6e44fb46e1445006f820448840386e",
+        MONDA_ROUTER_ABI,
+        globalWallet
+      );
+      const routerWETH = await mondaRouter.WETH();
+      const provider = new ethers.JsonRpcProvider(RPC_URL);
+      const DAK_ADDRESS = "0x0F0BDEbF0F83cD1EE3974779Bcb7315f9808c714";
+
+      for (let i = 1; i <= loopCount; i++) {
+        if (mondaSwapCancelled) {
+          addLog(`MondaSwap: Tự động hoán đổi MON & DAK bị dừng tại vòng lặp ${i}.`, "monda");
+          break;
+        }
+        if (i % 2 === 1) {
+          const amountIn = getRandomAmountMonForSwap();
+          const balanceMON = await provider.getBalance(globalWallet.address);
+          if (balanceMON < amountIn) {
+            addLog(`Monda: Số dư MON không đủ để hoán đổi MON → DAK.`, "monda");
+            continue;
+          }
+          const expectedOutput = getRandomAmountDakForSwap(); 
+          const amountOutMin = (expectedOutput * 980n) / 1000n;
+          const deadline = Math.floor(Date.now() / 1000) + 300;
+          let path = [routerWETH, DAK_ADDRESS];
+          addLog(`Monda: Hoán đổi MON ➯ DAK với số lượng ${ethers.formatEther(amountIn)} MON`, "monda");
+          await addTransactionToQueue(async (nonce) => {
+            const tx = await mondaRouter.swapExactETHForTokens(
+              amountOutMin,
+              path,
+              globalWallet.address,
+              deadline,
+              { value: amountIn, nonce: nonce }
+            );
+            addLog(`Monda: Giao dịch đã được gửi: ${getShortHash(tx.hash)}`, "monda");
+            await tx.wait();
+            addLog(`Monda: Giao dịch được xác nhận.`, "monda");
+            await updateWalletData();
+          }, `Monda Swap MON ➯ DAK`);
+        } else {
+          const amountIn = getRandomAmountDakForSwap();
+          const tokenContract = new ethers.Contract(DAK_ADDRESS, ERC20_ABI, provider);
+          const tokenBalance = await tokenContract.balanceOf(globalWallet.address);
+          if (tokenBalance < amountIn) {
+            addLog(`Monda: Số dư DAK không đủ để hoán đổi DAK → MON.`, "monda");
+            continue;
+          }
+          const tokenContractApprove = new ethers.Contract(DAK_ADDRESS, ERC20_ABI_APPROVE, globalWallet);
+          const currentAllowance = await tokenContractApprove.allowance(globalWallet.address, "0xc80585f78A6e44fb46e1445006f820448840386e");
+          if (currentAllowance < amountIn) {
+            addLog(`Monda: Đang phê duyệt DAK...`, "monda");
+            const approveTx = await tokenContractApprove.approve("0xc80585f78A6e44fb46e1445006f820448840386e", ethers.MaxUint256);
+            await approveTx.wait();
+            addLog(`Monda: Phê duyệt DAK thành công.`, "monda");
+          }
+          const expectedOutput = getRandomAmountMonForSwap(); 
+          const amountOutMin = (expectedOutput * 980n) / 1000n;
+          const deadline = Math.floor(Date.now() / 1000) + 300;
+          let path = [DAK_ADDRESS, routerWETH];
+          addLog(`Monda: Hoán đổi DAK ➯ MON với số lượng ${ethers.formatUnits(amountIn,18)} DAK`, "monda");
+          await addTransactionToQueue(async (nonce) => {
+            const tx = await mondaRouter.swapExactTokensForETH(
+              amountIn,
+              amountOutMin,
+              path,
+              globalWallet.address,
+              deadline,
+              { nonce: nonce }
+            );
+            addLog(`Monda: Giao dịch đã được gửi: ${getShortHash(tx.hash)}`, "monda");
+            await tx.wait();
+            addLog(`Monda: Giao dịch được xác nhận.`, "monda");
+            await updateWalletData();
+          }, `Monda Swap DAK ➯ MON`);
+        }
+        if (i < loopCount) {
+          const delay = getRandomDelay();
+          const minutes = Math.floor(delay / 60000);
+          const seconds = Math.floor((delay % 60000) / 1000);
+          addLog(`MondaSwap: Chu kỳ thứ ${i} hoàn tất`, "monda");
+          addLog(`MondaSwap: Đang chờ ${minutes} phút ${seconds} giây trước chu kỳ tiếp theo...`, "monda");
+          await waitWithCancel(delay, "monda");
+          if (mondaSwapCancelled) {
+            addLog(`Monda: Tự động hoán đổi bị dừng trong thời gian chờ.`, "monda");
+            break;
+          }
+        }
+      }
+      mondaSwapRunning = false;
+      mainMenu.setItems(getMainMenuItems());
+      mondaSubMenu.setItems(getMondaMenuItems());
+      screen.render();
+      addLog("MondaSwap: Tự động hoán đổi MON & DAK hoàn tất.", "monda");
+      mondaSubMenu.focus();
+    });
+  }
+
+
+async function runMondaSwapMonUsdcUsdt() {
+  promptBox.show();
+  promptBox.setFront();
+  promptBox.readInput("Nhập số lượng chu kỳ cho hoán đổi MON/USDC/USDT:", "", async (err, value) => {
+    promptBox.hide();
+    mondaSubMenu.show();
+    mondaSubMenu.focus();
+    screen.render();
+    if (err || !value) {
+      addLog("MondaSwap: Dữ liệu nhập không hợp lệ hoặc bị hủy.", "monda");
+      return;
+    }
+    const loopCount = parseInt(value);
+    if (isNaN(loopCount)) {
+      addLog("MondaSwap: Dữ liệu nhập không hợp lệ. Phải là số.", "monda");
+      return;
+    }
+    addLog(`MondaSwap: Bạn đã nhập ${loopCount} chu kỳ cho hoán đổi MON/USDC/USDT.`, "monda");
+
+    mondaSwapRunning = true;
+    mondaSwapCancelled = false;
+    mainMenu.setItems(getMainMenuItems());
+    mondaSubMenu.setItems(getMondaMenuItems());
+    mondaSubMenu.show();
+    mondaSubMenu.focus();
+    screen.render();
+
+    const mondaRouter = new ethers.Contract(
+      "0xc80585f78A6e44fb46e1445006f820448840386e",
+      MONDA_ROUTER_ABI,
+      globalWallet
+    );
+    const routerWETH = await mondaRouter.WETH();
+    const provider = new ethers.JsonRpcProvider(RPC_URL);
+
+    for (let i = 1; i <= loopCount; i++) {
+      if (mondaSwapCancelled) {
+        addLog(`MondaSwap: Tự động hoán đổi MON/USDC/USDT bị dừng tại vòng lặp ${i}.`, "monda");
+        break;
+      }
+
+      let useUSDC = ((i - 1) % 4) < 2;
+      let targetToken = useUSDC ? USDC_ADDRESS : "0x88b8E2161DEDC77EF4ab7585569D2415a1C1055D";
+
+      if (i % 2 === 1) {
+        const amountIn = getRandomAmountMonForUsdcUsdt();
+        const balanceMON = await provider.getBalance(globalWallet.address);
+        if (balanceMON < amountIn) {
+          addLog(`Monda: Số dư MON không đủ để hoán đổi MON → ${useUSDC ? "USDC" : "USDT"}.`, "monda");
+          continue;
+        }
+        const expectedOutput = useUSDC ? getRandomAmountUsdcForSwap() : getRandomAmountUsdtForSwap();
+        const amountOutMin = 0n;
+        const deadline = Math.floor(Date.now() / 1000) + 300;
+        const path = [routerWETH, targetToken];
+        addLog(`Monda: Hoán đổi MON ➯ ${useUSDC ? "USDC" : "USDT"} với số lượng: ${ethers.formatEther(amountIn)} MON`, "monda");
+        await addTransactionToQueue(async (nonce) => {
+          const tx = await mondaRouter.swapExactETHForTokens(
+            amountOutMin,
+            path,
+            globalWallet.address,
+            deadline,
+            { value: amountIn, nonce: nonce }
+          );
+          addLog(`Monda: Giao dịch đã được gửi: ${getShortHash(tx.hash)}`, "monda");
+          await tx.wait();
+          addLog(`Monda: Giao dịch được xác nhận.`, "monda");
+          await updateWalletData();
+        }, `Monda Swap MON ➯ ${useUSDC ? "USDC" : "USDT"}`);
+      } else {
+        const decimals = 6;
+        const amountIn = useUSDC ? getRandomAmountUsdcForSwap() : getRandomAmountUsdtForSwap();
+        const tokenContract = new ethers.Contract(targetToken, ERC20_ABI, provider);
+        const tokenBalance = await tokenContract.balanceOf(globalWallet.address);
+        if (tokenBalance < amountIn) {
+          addLog(`Monda: Số dư ${useUSDC ? "USDC" : "USDT"} không đủ để hoán đổi sang MON.`, "monda");
+          continue;
+        }
+        const tokenContractApprove = new ethers.Contract(targetToken, ERC20_ABI_APPROVE, globalWallet);
+        const currentAllowance = await tokenContractApprove.allowance(globalWallet.address, "0xc80585f78A6e44fb46e1445006f820448840386e");
+        if (currentAllowance < amountIn) {
+          addLog(`Monda: Đang phê duyệt ${useUSDC ? "USDC" : "USDT"}...`, "monda");
+          const approveTx = await tokenContractApprove.approve("0xc80585f78A6e44fb46e1445006f820448840386e", ethers.MaxUint256);
+          await approveTx.wait();
+          addLog(`Monda: Phê duyệt ${useUSDC ? "USDC" : "USDT"} thành công.`, "monda");
+        }
+        const expectedOutput = getRandomAmountMonForUsdcUsdt();
+        const amountOutMin = 0n; 
+        const deadline = Math.floor(Date.now() / 1000) + 300;
+        const path = [targetToken, routerWETH];
+        addLog(`Monda: Hoán đổi ${useUSDC ? "USDC" : "USDT"} ➯ MON với số lượng: ${ethers.formatUnits(amountIn, decimals)} ${useUSDC ? "USDC" : "USDT"}`, "monda");
+        await addTransactionToQueue(async (nonce) => {
+          const tx = await mondaRouter.swapExactTokensForETH(
+            amountIn,
+            amountOutMin,
+            path,
+            globalWallet.address,
+            deadline,
+            { nonce: nonce }
+          );
+          addLog(`Monda: Giao dịch đã được gửi: ${getShortHash(tx.hash)}`, "monda");
+          await tx.wait();
+          addLog(`Monda: Giao dịch được xác nhận ${getShortHash(tx.hash)}`, "monda");
+          await updateWalletData();
+        }, `Monda Swap ${useUSDC ? "USDC" : "USDT"} ➯ MON`);
+      }
+      if (i < loopCount) {
+        const delay = getRandomDelay();
+        const minutes = Math.floor(delay / 60000);
+        const seconds = Math.floor((delay % 60000) / 1000);
+        addLog(`Monda: Chu kỳ thứ ${i} hoàn tất`, "monda");
+        addLog(`Monda: Đang chờ ${minutes} phút ${seconds} giây trước chu kỳ tiếp theo...`, "monda");
+        await waitWithCancel(delay, "monda");
+        if (mondaSwapCancelled) {
+          addLog(`Monda: Tự động hoán đổi bị dừng trong thời gian chờ.`, "monda");
+          break;
+        }
+      }
+    }
+    mondaSwapRunning = false;
+    mainMenu.setItems(getMainMenuItems());
+    mondaSubMenu.setItems(getMondaMenuItems());
+    screen.render();
+    addLog("MondaSwap: Tự động hoán đổi MON/USDC/USDT hoàn tất.", "monda");
+    mondaSubMenu.focus();
+  });
+}
+
+
+async function runMondaSwapMonMonda() {
+  promptBox.setFront();
+  promptBox.readInput("Nhập số lượng hoán đổi Monda (Mon & Monda):", "", async (err, value) => {
+    promptBox.hide();
+    mondaSubMenu.show();
+    mondaSubMenu.focus();
+    screen.render();
+    if (err || !value) {
+      addLog("MondaSwap: Dữ liệu nhập không hợp lệ hoặc bị hủy.", "monda");
+      return;
+    }
+    const loopCount = parseInt(value);
+    if (isNaN(loopCount)) {
+      addLog("MondaSwap: Dữ liệu nhập không hợp lệ. Phải là số.", "monda");
+      return;
+    }
+    addLog(`MondaSwap: Bạn đã nhập ${loopCount} lần tự động hoán đổi Mon & Monda.`, "monda");
+    if (mondaSwapRunning) {
+      addLog("MondaSwap: Giao dịch đang chạy. Vui lòng dừng giao dịch trước.", "monda");
+      return;
+    }
+    mondaSwapRunning = true;
+    mondaSwapCancelled = false;
+    mainMenu.setItems(getMainMenuItems());
+    mondaSubMenu.setItems(getMondaMenuItems());
+    mondaSubMenu.show();
+    mondaSubMenu.focus();
+    screen.render();
+    for (let i = 1; i <= loopCount; i++) {
+      if (mondaSwapCancelled) {
+        addLog(`MondaSwap: Tự động hoán đổi Mon & Monda bị dừng tại vòng lặp ${i}.`, "monda");
+        break;
+      }
+      await addTransactionToQueue(async (nonce) => {
+        addLog(`MondaSwap: Vòng lặp ${i}: Thực hiện hoán đổi Mon & Monda.`, "monda");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }, `Monda Swap Mon ➯ Monda`);
+      if (i < loopCount) {
+        const delay = getRandomDelay();
+        const minutes = Math.floor(delay / 60000);
+        const seconds = Math.floor((delay % 60000) / 1000);
+        addLog(`MondaSwap: Chu kỳ thứ ${i} hoàn tất`, "monda");
+        addLog(`MondaSwap: Đang chờ ${minutes} phút ${seconds} giây trước giao dịch tiếp theo...`, "monda");
+        await waitWithCancel(delay, "monda");
+        if (mondaSwapCancelled) {
+          addLog("Monda: Tự động hoán đổi bị dừng trong thời gian chờ.", "monda");
+          break;
+        }
+      }
+    }
+    mondaSwapRunning = false;
+    mainMenu.setItems(getMainMenuItems());
+    mondaSubMenu.setItems(getMondaMenuItems());
+    screen.render();
+    addLog("MondaSwap: Tự động hoán đổi Mon & Monda hoàn tất.", "monda");
+    mondaSubMenu.focus();
+  });
+}
+
+async function runBubbleFiAutoSwap() {
+  promptBox.setFront();
+  promptBox.readInput("Nhập số lượng hoán đổi BubbleFi:", "", async (err, value) => {
+    promptBox.hide();
+    screen.render();
+    if (err || !value) {
+      addLog("BubbleFi: Dữ liệu nhập không hợp lệ hoặc bị hủy.", "bubblefi");
+      return;
+    }
+    const loopCount = parseInt(value);
+    if (isNaN(loopCount) || loopCount <= 0) {
+      addLog("BubbleFi: Dữ liệu nhập không hợp lệ. Phải là số dương.", "bubblefi");
+      return;
+    }
+    addLog(`BubbleFi: Bạn đã nhập ${loopCount} lần hoán đổi BubbleFi.`, "bubblefi");
+    if (bubbleFiSwapRunning) {
+      addLog("BubbleFi: Giao dịch đang chạy. Vui lòng dừng giao dịch trước.", "bubblefi");
+      return;
+    }
+    bubbleFiSwapRunning = true;
+    bubbleFiSwapCancelled = false;
+    mainMenu.setItems(getMainMenuItems());
+    bubbleFiSubMenu.setItems(getBubbleFiMenuItems());
+    bubbleFiSubMenu.show();
+    screen.render();
+    let userId;
+    try {
+      const sessionResponse = await axios.get("https://api.bubblefi.xyz/auth/session", {
+        headers: { 
+          "Content-Type": "application/json",
+          Cookie: BUBBLEFI_COOKIE,
+          "origin": "https://app.bubblefi.xyz",
+          "referer": "https://app.bubblefi.xyz/",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+        }
+      });
+      userId = sessionResponse.data.user.id;
+      addLog(`BubbleFi: Đã lấy được phiên cho ID người dùng ${userId}`, "bubblefi");
+    } catch (error) {
+      addLog(`BubbleFi: Không thể lấy phiên: ${error.message}`, "bubblefi");
+      bubbleFiSwapRunning = false;
+      return;
+    }
+
+    const tokens = [
+      { address: TOKEN_PEPE, name: "PEPE" },
+      { address: TOKEN_MLDK, name: "MLDK" },
+      { address: TOKEN_MYK,  name: "MYK" }
+    ];
+
+    for (let i = 1; i <= loopCount; i++) {
+      if (bubbleFiSwapCancelled) {
+        addLog(`BubbleFi: Hoán đổi bị hủy tại chu kỳ thứ ${i}.`, "bubblefi");
+        break;
+      }
+
+      const indexFrom = Math.floor(Math.random() * tokens.length);
+      let indexTo;
+      do {
+        indexTo = Math.floor(Math.random() * tokens.length);
+      } while (indexTo === indexFrom);
+      const fromToken = tokens[indexFrom];
+      const toToken = tokens[indexTo];
+      const amountToSwap = getRandomAmountBubbleFi();
+      const fromTokenContract = new ethers.Contract(fromToken.address, ERC20_ABI, globalWallet.provider);
+      const balance = await fromTokenContract.balanceOf(globalWallet.address);
+      if (balance < amountToSwap) {
+        addLog(`BubbleFi: Số dư ${fromToken.name} (${ethers.formatUnits(balance, 18)}) không đủ để hoán đổi ${ethers.formatUnits(amountToSwap, 18)}. Bỏ qua vòng lặp này.`, "bubblefi");
+        continue;
+      }
+
+      addLog(`BubbleFi: Hoán đổi ${fromToken.name} ➯ ${toToken.name} với số lượng ${ethers.formatUnits(amountToSwap, 18)}`, "bubblefi");
+
+      await addTransactionToQueue(async (nonce) => {
+        const fromTokenContractApprove = new ethers.Contract(fromToken.address, ERC20_ABI_APPROVE, globalWallet);
+        const currentAllowance = await fromTokenContractApprove.allowance(globalWallet.address, BUBBLEFI_ROUTER_ADDRESS);
+        if (currentAllowance < amountToSwap) {
+          addLog(`BubbleFi: Cần phê duyệt ${fromToken.name}.`, "bubblefi");
+          const approveTx = await fromTokenContractApprove.approve(BUBBLEFI_ROUTER_ADDRESS, ethers.MaxUint256, { nonce });
+          addLog(`BubbleFi: Giao dịch phê duyệt ${fromToken.name} đã được gửi: ${getShortHash(approveTx.hash)}`, "bubblefi");
+          await approveTx.wait();
+          addLog(`BubbleFi: Phê duyệt ${fromToken.name} thành công.`, "bubblefi");
+        }
+        const bubbleFiRouter = new ethers.Contract(BUBBLEFI_ROUTER_ADDRESS, BUBBLEFI_ROUTER_ABI, globalWallet);
+        const swapPath = [fromToken.address, toToken.address];
+        let estimatedAmounts;
+        try {
+          estimatedAmounts = await bubbleFiRouter.getAmountsOut(amountToSwap, swapPath);
+        } catch (error) {
+          addLog(`BubbleFi: getAmountsOut thất bại: ${error.message}`, "bubblefi");
+          return;
+        }
+        const outputEstimated = estimatedAmounts[estimatedAmounts.length - 1];
+        if (outputEstimated === 0n) {
+          addLog(`BubbleFi: Ước tính đầu ra bằng 0, đường dẫn hoán đổi không hợp lệ.`, "bubblefi");
+          return;
+        }
+        const amountOutMin = outputEstimated * 997n / 1000n;
+        const deadline = Math.floor(Date.now() / 1000) + 300;
+        addLog(`BubbleFi: Bắt đầu hoán đổi ${fromToken.name} ➯ ${toToken.name} với số lượng ${ethers.formatUnits(amountToSwap, 18)}`, "bubblefi");
+        const raffleParam = {
+          enter: false,
+          fractionOfSwapAmount: { numerator: 0, denominator: 0 },
+          raffleNftReceiver: "0x0000000000000000000000000000000000000000"
+        };
+
+        const swapTx = await bubbleFiRouter.swapExactTokensForTokens(
+          amountToSwap,
+          amountOutMin,
+          swapPath,
+          globalWallet.address,
+          deadline,
+          raffleParam,
+          { nonce }
+        );
+        addLog(`BubbleFi: Giao dịch hoán đổi đã được gửi: ${getShortHash(swapTx.hash)}`, "bubblefi");
+        await swapTx.wait();
+        const processPayload = {
+          liqAddress: "0x",
+          methodType: "SWAP",
+          transactionHash: swapTx.hash,
+          userAddress: globalWallet.address,
+          userId: userId,
+          usingBackpack: true
+        };
+        try {
+          const postResponse = await axios.post("https://api.bubblefi.xyz/points/process-action", processPayload, {
+            headers: {
+              "Content-Type": "application/json",
+              Cookie: BUBBLEFI_COOKIE,
+              "origin": "https://app.bubblefi.xyz",
+              "referer": "https://app.bubblefi.xyz/",
+              "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+            }
+          });
+          const { pointsAwarded, totalPoints } = postResponse.data;
+          addLog(`BubbleFi: Điểm được thưởng: Điểm = ${pointsAwarded}, Tổng điểm = ${totalPoints}`, "bubblefi");
+          await updateWalletData();
+          addLog(`BubbleFi: Hoán đổi ${fromToken.name} ➯ ${toToken.name} hoàn tất.`, "bubblefi");
+        } catch (postError) {
+          addLog(`BubbleFi: Không thể xử lý điểm: ${postError.message}`, "bubblefi");
+        }
+      }, `BubbleFi Swap ${fromToken.name} ➯ ${toToken.name}`);
+      if (i < loopCount) {
+        const delay = getRandomDelay();
+        const minutes = Math.floor(delay / 60000);
+        const seconds = Math.floor((delay % 60000) / 1000);
+        addLog(`BubbleFiSwap: Chu kỳ thứ ${i} hoàn tất`, "bubblefi");
+        addLog(`BubbleFiSwap: Đang chờ ${minutes} phút ${seconds} giây trước giao dịch tiếp theo...`, "bubblefi");
+        await waitWithCancel(delay, "bubblefi");
+        if (bubbleFiSwapCancelled) {
+          addLog("BubbleFi: Tự động hoán đổi bị dừng trong thời gian chờ.", "bubblefi");
+          break;
+        } 
+      }
+    } 
+    bubbleFiSwapRunning = false;
+    bubbleFiSubMenu.setItems(getBubbleFiMenuItems());
+    mainMenu.setItems(getMainMenuItems());
+    screen.render();
+    addLog("BubbleFi: Tự động hoán đổi hoàn tất.", "bubblefi");
+  });
+}
+mainMenu.on("select", (item) => {
+  const selected = item.getText();
+  if (selected === "Dừng tất cả giao dịch") {
+    stopAllTransactions();
+    mainMenu.setItems(getMainMenuItems());
+    mainMenu.focus();
+    screen.render();
+  } else if (selected === "Hoán đổi Rubic") {
+    rubicSubMenu.show();
+    rubicSubMenu.focus();
+    screen.render();
+  } else if (selected === "Hoán đổi Taya") {
+    runTayaSwap();
+  } else if (selected === "Hoán đổi Hedgemony") {
+    hedgemonySubMenu.show();
+    hedgemonySubMenu.focus();
+    screen.render();
+  } else if (selected === "Hoán đổi Monda") {
+    mainMenu.hide();
+    mondaSubMenu.setItems(getMondaMenuItems());
+    mondaSubMenu.show();
+    setTimeout(() => {
+      mondaSubMenu.focus();
+      screen.render();
+    }, 100);
+  } else if (selected === "Hoán đổi BubbleFi") {
+    mainMenu.hide();
+    bubbleFiSubMenu.setItems(getBubbleFiMenuItems());
+    bubbleFiSubMenu.show();
+    setTimeout(() => {
+      bubbleFiSubMenu.focus();
+      screen.render();
+    }, 100);
+  } else if (selected === "Hàng đợi giao dịch") {
+    showTransactionQueueMenu();
+  } else if (selected === "Xóa nhật ký giao dịch") {
+    clearTransactionLogs();
+  } else if (selected === "Làm mới") {
+    updateWalletData();
+    updateLogs();
+    screen.render();
+    addLog("Đã làm mới", "hệ thống");
+    mainMenu.focus();
+  } else if (selected === "Thoát") {
+    process.exit(0);
+  }
+});
+
+rubicSubMenu.on("select", (item) => {
+  const selected = item.getText();
+  if (selected === "Tự động hoán đổi Mon & WMON") {
+    runAutoSwap();
+  } else if (selected === "Dừng giao dịch") {
+    if (autoSwapRunning) {
+      autoSwapCancelled = true;
+      addLog("Rubic: Lệnh dừng giao dịch đã được nhận.", "rubic");
+    } else {
+      addLog("Rubic: Không có giao dịch nào đang chạy.", "rubic");
+    }
+  } else if (selected === "Xóa nhật ký giao dịch") {
+    clearTransactionLogs();
+  } else if (selected === "Quay lại menu chính") {
+    rubicSubMenu.hide();
+    mainMenu.show();
+    mainMenu.focus();
+    screen.render();
+  } else if (selected === "Thoát") {
+    process.exit(0);
+  }
+});
+
+function showTayaSubMenu() {
+  mainMenu.hide();
+  tayaSubMenu.setItems(getTayaMenuItems());
+  tayaSubMenu.show();
+  tayaSubMenu.focus();
+  screen.render();
+}
+
+tayaSubMenu.on("select", (item) => {
+  const selected = item.getText();
+  if (selected === "Tự động hoán đổi Token ngẫu nhiên") {
+    runTayaAutoSwapRandom();
+  } else if (selected === "Tự động hoán đổi MON & WMON") {
+    runTayaWrapCycle();
+  } else if (selected === "Dừng giao dịch") {
+    if (tayaSwapRunning) {
+      tayaSwapCancelled = true;
+      addLog("Taya: Lệnh dừng giao dịch đã được nhận.", "taya");
+    } else {
+      addLog("Taya: Không có giao dịch nào đang chạy.", "taya");
+    }
+  } else if (selected === "Xóa nhật ký giao dịch") {
+    clearTransactionLogs();
+  } else if (selected === "Quay lại menu chính") {
+    tayaSubMenu.hide();
+    mainMenu.show();
+    mainMenu.focus();
+    screen.render();
+  } else if (selected === "Thoát") {
+    process.exit(0);
+  }
+});
+
+function showHedgemonySubMenu() {
+  mainMenu.hide();
+  hedgemonySubMenu.setItems(getHedgemonyMenuItems());
+  hedgemonySubMenu.show();
+  hedgemonySubMenu.focus();
+  screen.render();
+}
+
+hedgemonySubMenu.on("select", (item) => {
+  const selected = item.getText();
+  if (selected === "Tự động hoán đổi Mon & WMON") {
+    runHedgemonySwap();
+  } else if (selected === "Tự động hoán đổi Mon & HEDGE") {
+    runHedgeSwap();
+  } else if (selected === "Dừng giao dịch") {
+    if (hedgemonySwapRunning) {
+      hedgemonySwapCancelled = true;
+      addLog("Hedgemony: Lệnh dừng giao dịch đã được nhận.", "hedgemony");
+    } else {
+      addLog("Hedgemony: Không có giao dịch nào đang chạy.", "hedgemony");
+    }
+  } else if (selected === "Xóa nhật ký giao dịch") {
+    clearTransactionLogs();
+  } else if (selected === "Quay lại menu chính") {
+    hedgemonySubMenu.hide();
+    mainMenu.show();
+    mainMenu.focus();
+    screen.render();
+  } else if (selected === "Thoát") {
+    process.exit(0);
+  }
+});
+
+mondaSubMenu.on("select", (item) => {
+  const selected = item.getText();
+  if (selected === "Tự động hoán đổi Mon & Dak") {
+    runMondaSwapMonDak();
+  } else if (selected === "Tự động hoán đổi Mon & USDC/USDT") {
+    runMondaSwapMonUsdcUsdt();
+  } else if (selected === "Tự động hoán đổi Mon & Monda") {
+    addLog("MondaSwap: Tính năng tự động hoán đổi Mon & Monda sắp ra mắt.", "monda");
+    mondaSubMenu.focus();
+    return;
+  } else if (selected === "Dừng giao dịch") {
+    if (mondaSwapRunning) {
+      mondaSwapCancelled = true;
+      addLog("MondaSwap: Lệnh dừng giao dịch đã được nhận.", "monda");
+    } else {
+      addLog("MondaSwap: Không có giao dịch nào đang chạy.", "monda");
+    }
+  } else if (selected === "Xóa nhật ký giao dịch") {
+    clearTransactionLogs();
+  } else if (selected === "Quay lại menu chính") {
+    mondaSubMenu.hide();
+    mainMenu.show();
+    setTimeout(() => {
+      mainMenu.focus();
+      screen.render();
+    }, 100);
+  } else if (selected === "Thoát") {
+    process.exit(0);
+  }
+});
+
+bubbleFiSubMenu.on("select", (item) => {
+  const selected = item.getText();
+  if (selected === "Tự động hoán đổi Pepe & Mldk & Myk") {
+    runBubbleFiAutoSwap();
+  } else if (selected === "Dừng giao dịch") {
+    if (bubbleFiSwapRunning) {
+      bubbleFiSwapCancelled = true;
+      addLog("BubbleFiSwap: Lệnh dừng giao dịch đã được nhận.", "bubblefi");
+    } else {
+      addLog("BubbleFiSwap: Không có giao dịch nào đang chạy.", "bubblefi");
+    }
+  } else if (selected === "Xóa nhật ký giao dịch") {
+    clearTransactionLogs();
+  } else if (selected === "Quay lại menu chính") {
+    bubbleFiSubMenu.hide();
+    mainMenu.show();
+    setTimeout(() => {
+      mainMenu.focus();
+      screen.render();
+    }, 100);
+  } else if (selected === "Thoát") {
+    process.exit(0);
+  }
+});
+
+screen.key(["C-up"], () => { logsBox.scroll(-1); safeRender(); });
+screen.key(["C-down"], () => { logsBox.scroll(1); safeRender(); });
+safeRender();
+mainMenu.focus();
+updateLogs();
+screen.render();
