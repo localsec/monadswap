@@ -1057,7 +1057,7 @@ async function runTayaAutoSwapRandom() {
       addLog(`Taya: Đang tiến hành swap MON ➯ ${getTokenSymbol(randomToken)}`, "taya");
       const path = [WMON_ADDRESS, randomToken];
       const amountIn = getRandomAmountTaya();
-      addLog(`Taya: MenggunSẽ jumlah: ${ethers.formatEther(amountIn)}`, "taya");
+      addLog(`Taya: sử dụngSẽ jumlah: ${ethers.formatEther(amountIn)}`, "taya");
       await addTransactionToQueue(async (nonce) => {
         await executeTayaSwapRouteWithAmount(i, loopCount, globalWallet, path, true, amountIn, nonce);
       }, `Taya Random Swap - Lặp lại ${i}`);
