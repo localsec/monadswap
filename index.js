@@ -157,26 +157,26 @@ function getTokenSymbol(address) {
   return address;
 }
 
-// Atur Delay antar transaksi
+// Atur Delay antar Giao dịch
 function getRandomDelay() {
   return Math.random() * (60000 - 30000) + 30000;
 }
 
-// Random Ammount untuk Rubic 
+// Random Số lượng cho Rubic 
 function getRandomAmount() {
   const min = 0.005, max = 0.01;
   const randomVal = Math.random() * (max - min) + min;
   return ethers.parseEther(randomVal.toFixed(6));
 }
 
-// Random Ammount untuk Taya 
+// Random Số lượng cho Taya 
 function getRandomAmountTaya() {
   const min = 0.005, max = 0.01;
   const randomVal = Math.random() * (max - min) + min;
   return ethers.parseEther(randomVal.toFixed(6));
 }
 
-// Random Ammount untuk Hedgemony Mon - Wmon
+// Random Số lượng cho Hedgemony Mon - Wmon
 function getRandomAmountHedgemony() {
   const min = 0.003, max = 0.01;
   const randomVal = Math.random() * (max - min) + min;
@@ -197,35 +197,35 @@ function getRandomAmountHedgeToMon() {
   return ethers.parseUnits(randomInt.toString(), 18);
 }
 
-// Random Ammount Monda untuk  Dak -> Mon
+// Random Ammount Monda   Dak -> Mon
   function getRandomAmountDakForSwap() {
     const min = 0.3, max = 4;
     const randomVal = Math.random() * (max - min) + min;
     return ethers.parseUnits(randomVal.toFixed(6), 18);
   }
 
-// Random Ammount Monda untuk  Mon -> Dak
+// Random Ammount Monda   Mon -> Dak
  function getRandomAmountMonForSwap() {
     const min = 0.1, max = 1;
     const randomVal = Math.random() * (max - min) + min;
     return ethers.parseUnits(randomVal.toFixed(6), 18);
   }
 
-// Random Ammount Monda untuk Mon -> usdc/usdt 
+// Random Ammount Monda  Mon -> usdc/usdt 
 function getRandomAmountMonForUsdcUsdt() {
     const min = 1 , max = 4;
     const randomVal = Math.random() * (max - min) + min;
     return ethers.parseEther(randomVal.toFixed(6)); 
   }
 
-// Random Ammount Monda untuk usdc -> Mon
+// Random Ammount Monda  usdc -> Mon
   function getRandomAmountUsdcForSwap() {
     const min = 10, max = 43 ;
     const randomVal = Math.random() * (max - min) + min;
     return ethers.parseUnits(randomVal.toFixed(6), 6);
   }
 
-  // Random Ammount Monda untuk usdt -> Mon
+  // Random Ammount Monda  usdt -> Mon
   function getRandomAmountUsdtForSwap() {
     const min = 11, max = 43;
     const randomVal = Math.random() * (max - min) + min;
@@ -267,12 +267,12 @@ function updateLogs() {
 function clearTransactionLogs() {
   transactionLogs = [];
   updateLogs();
-  addLog("Transaction logs telah dihapus.", "system");
+  addLog("Nhật ký giao dịchđã bị xóa.", "system");
 }
 
 const screen = blessed.screen({
   smartCSR: true,
-  title: "NT Exhaust",
+  title: "LocalSec",
   fullUnicode: true,
   mouse: true
 });
@@ -288,20 +288,20 @@ const headerBox = blessed.box({
   tags: true,
   style: { fg: "white", bg: "default" }
 });
-figlet.text("NT Exhaust".toUpperCase(), { font: "Speed", horizontalLayout: "default" }, (err, data) => {
-  if (err) headerBox.setContent("{center}{bold}MONAD AUTO SWAP{/bold}{/center}");
+figlet.text("LocalSec".toUpperCase(), { font: "Speed", horizontalLayout: "default" }, (err, data) => {
+  if (err) headerBox.setContent("{center}{bold}MONAD Tự động hoán đổi{/bold}{/center}");
   else headerBox.setContent(`{center}{bold}{bright-cyan-fg}${data}{/bright-cyan-fg}{/bold}{/center}`);
   safeRender();
 });
 const descriptionBox = blessed.box({
   left: "center",
   width: "100%",
-  content: "{center}{bold}{bright-cyan-fg}➕➕➕➕ MONAD AUTO SWAP ➕➕➕➕{/bright-cyan-fg}{/bold}{/center}",
+  content: "{center}{bold}{bright-cyan-fg}➕➕➕➕ MONAD Tự động hoán đổi ➕➕➕➕{/bright-cyan-fg}{/bold}{/center}",
   tags: true,
   style: { fg: "white", bg: "default" }
 });
 const logsBox = blessed.box({
-  label: " Transaction Logs ",
+  label: " Nhật ký giao dịch",
   left: 0,
   border: { type: "line" },
   scrollable: true,
@@ -315,7 +315,7 @@ const logsBox = blessed.box({
   style: { border: { fg: "bright-red" }, bg: "default" }
 });
 const walletBox = blessed.box({
-  label: " Informasi Wallet ",
+  label: " Thông tin ví ",
   left: "60%",
   tags: true,
   border: { type: "line" },
@@ -361,7 +361,7 @@ function stopAllTransactions() {
     hedgemonySwapCancelled = true;
     mondaSwapCancelled = true;
     bubbleFiSwapCancelled = true;
-    addLog("Stop All Transactions command received. Semua transaksi telah dihentikan.", "system");
+    addLog("Stop All Transactions command received. Tất cả các giao dịch đã bị dừng lại.", "system");
 
   }
 }
@@ -369,34 +369,34 @@ function stopAllTransactions() {
 
 function getRubicMenuItems() {
   return autoSwapRunning
-    ? ["Auto Swap Mon & WMON", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
-    : ["Auto Swap Mon & WMON", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
+    ? ["Tự động hoán đổi Mon & WMON", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
+    : ["Tự động hoán đổi Mon & WMON", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
 }
 function getTayaMenuItems() {
   return tayaSwapRunning
-    ? ["Auto Swap Random Token", "Auto Swap MON & WMON", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
-    : ["Auto Swap Random Token", "Auto Swap MON & WMON", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
+    ? ["Tự động hoán đổi Random Token", "Tự động hoán đổi MON & WMON", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
+    : ["Tự động hoán đổi Random Token", "Tự động hoán đổi MON & WMON", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
 }
 function getHedgemonyMenuItems() {
   return hedgemonySwapRunning
-    ? ["Auto Swap Mon & WMON", "Auto Swap Mon & HEDGE", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
-    : ["Auto Swap Mon & WMON", "Auto Swap Mon & HEDGE", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
+    ? ["Tự động hoán đổi Mon & WMON", "Tự động hoán đổi Mon & HEDGE", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
+    : ["Tự động hoán đổi Mon & WMON", "Tự động hoán đổi Mon & HEDGE", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
 }
 function getMondaMenuItems() {
     return mondaSwapRunning
-      ? ["Auto Swap Mon & Dak", "Auto Swap Mon & USDC/USDT", "{grey-fg}Auto Swap Mon & Monda [COMING SOON]{/grey-fg}", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
-      : ["Auto Swap Mon & Dak", "Auto Swap Mon & USDC/USDT", "{grey-fg}Auto Swap Mon & Monda [COMING SOON]{/grey-fg}", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
+      ? ["Tự động hoán đổi Mon & Dak", "Tự động hoán đổi Mon & USDC/USDT", "{grey-fg}Tự động hoán đổi Mon & Monda [COMING SOON]{/grey-fg}", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
+      : ["Tự động hoán đổi Mon & Dak", "Tự động hoán đổi Mon & USDC/USDT", "{grey-fg}Tự động hoán đổi Mon & Monda [COMING SOON]{/grey-fg}", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
   }
 function getBubbleFiMenuItems() {
     return bubbleFiSwapRunning
-      ? ["Auto Swap Pepe & Mldk & Myk", "Stop Transaction", "Clear Transaction Logs", "Back To Main Menu", "Exit"]
-      : ["Auto Swap Pepe & Mldk & Myk", "Clear Transaction Logs", "Back To Main Menu", "Exit"];
+      ? ["Tự động hoán đổi Pepe & Mldk & Myk", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
+      : ["Tự động hoán đổi Pepe & Mldk & Myk", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
   }
 
 
 
 function getMainMenuItems() {
-    let items = ["Rubic Swap", "Taya Swap", "Hedgemony Swap", "Monda Swap", "BubbleFi Swap", "Antrian Transaksi", "Clear Transaction Logs", "Refresh", "Exit"];
+    let items = ["Rubic Swap", "Taya Swap", "Hedgemony Swap", "Monda Swap", "BubbleFi Swap", "Antrian Giao dịch", "Xóa Nhật ký giao dịch", "Refresh", "Exit"];
     if (autoSwapRunning || tayaSwapRunning || hedgemonySwapRunning || mondaSwapRunning || bubbleFiSwapRunning) {
       items.unshift("Stop All Transactions");
     }
@@ -562,7 +562,7 @@ mainMenu.focus();
 updateLogs();
 updateWalletData();
 
-function addTransactionToQueue(transactionFunction, description = "Transaksi") {
+function addTransactionToQueue(transactionFunction, description = "Giao dịch") {
   const transactionId = ++transactionIdCounter;
   transactionQueueList.push({
     id: transactionId,
@@ -570,53 +570,53 @@ function addTransactionToQueue(transactionFunction, description = "Transaksi") {
     timestamp: new Date().toLocaleTimeString(),
     status: "queued"
   });
-  addLog(`Transaksi [${transactionId}] ditambahkan ke antrean: ${description}`, "system");
+  addLog(`Giao dịch [${transactionId}] ditambahkan ke antrean: ${description}`, "system");
   updateQueueDisplay();
 
   transactionQueue = transactionQueue.then(async () => {
     updateTransactionStatus(transactionId, "processing");
-    addLog(`Transaksi [${transactionId}] mulai diproses.`, "system");
+    addLog(`Giao dịch [${transactionId}] bắt đầu xử lý.`, "system");
     try {
       if (nextNonce === null) {
         const provider = new ethers.JsonRpcProvider(RPC_URL);
         nextNonce = await provider.getTransactionCount(globalWallet.address, "pending");
-        addLog(`Nonce awal: ${nextNonce}`, "system");
+        addLog(`Số nonce ban đầu: ${nextNonce}`, "system");
       }
       const result = await transactionFunction(nextNonce);
       nextNonce++;
       updateTransactionStatus(transactionId, "completed");
-      addLog(`Transaksi [${transactionId}] selesai.`, "system");
+      addLog(`Giao dịch [${transactionId}] hoàn thành.`, "system");
       return result;
     } catch (error) {
       updateTransactionStatus(transactionId, "error");
-      addLog(`Transaksi [${transactionId}] gagal: ${error.message}`, "system");
+      addLog(`Giao dịch [${transactionId}] thất bại: ${error.message}`, "system");
       if (error.message && error.message.toLowerCase().includes("nonce has already been used")) {
         nextNonce++;
-        addLog(`Nonce diincrement karena sudah digunakan. Nilai nonce baru: ${nextNonce}`, "system");
+        addLog(`Nonce tăng lên vì nó đã được sử dụng. Giá trị nonce mới: ${nextNonce}`, "system");
       } else if (error.message && error.message.toLowerCase().includes("rpc")) {
         let retries = 0;
         while (retries < MAX_RPC_RETRIES) {
           try {
             const provider = new ethers.JsonRpcProvider(RPC_URL);
             nextNonce = await provider.getTransactionCount(globalWallet.address, "pending");
-            addLog(`RPC normal, nonce direfresh: ${nextNonce}`, "system");
+            addLog(`RPC normal, làm mới nonce: ${nextNonce}`, "system");
             break;
           } catch (rpcError) {
             retries++;
-            addLog(`RPC error, percobaan retry ${retries}: ${rpcError.message}`, "system");
+            addLog(`RPC error, kiểm tra retry ${retries}: ${rpcError.message}`, "system");
             await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
           }
         }
         if (retries === MAX_RPC_RETRIES) {
-          addLog(`RPC tetap error setelah ${MAX_RPC_RETRIES} percobaan. Transaksi dilewati.`, "system");
+          addLog(`RPC vẫn lỗi sau ${MAX_RPC_RETRIES} kiểm tra. Giao dịch dilewati.`, "system");
         }
       } else {
         try {
           const provider = new ethers.JsonRpcProvider(RPC_URL);
           nextNonce = await provider.getTransactionCount(globalWallet.address, "pending");
-          addLog(`Nonce direfresh: ${nextNonce}`, "system");
+          addLog(`làm mới nonce: ${nextNonce}`, "system");
         } catch (rpcError) {
-          addLog(`Gagal refresh nonce: ${rpcError.message}`, "system");
+          addLog(`thất bại refresh nonce: ${rpcError.message}`, "system");
         }
       }
       return;
@@ -640,14 +640,14 @@ function removeTransactionFromQueue(id) {
   updateQueueDisplay();
 }
 function getTransactionQueueContent() {
-  if (transactionQueueList.length === 0) return "Tidak ada transaksi dalam antrean.";
+  if (transactionQueueList.length === 0) return "Không có bất kỳ Giao dịch trong dòng.";
   return transactionQueueList.map(tx => `ID: ${tx.id} | ${tx.description} | ${tx.status} | ${tx.timestamp}`).join("\n");
 }
 let queueMenuBox = null;
 let queueUpdateInterval = null;
 function showTransactionQueueMenu() {
   const container = blessed.box({
-    label: " Antrian Transaksi ",
+    label: " Antrian Giao dịch ",
     top: "10%",
     left: "center",
     width: "80%",
@@ -682,7 +682,7 @@ function showTransactionQueueMenu() {
     interactive: true
   });
   exitButton.on("press", () => {
-    addLog("Keluar Dari Menu Antrian Transaksi.", "system");
+    addLog("Menu thoát hàng đợi Giao dịch.", "system");
     clearInterval(queueUpdateInterval);
     container.destroy();
     queueMenuBox = null;
@@ -691,7 +691,7 @@ function showTransactionQueueMenu() {
     screen.render();
   });
   container.key(["a", "s", "d"], () => {
-    addLog("Keluar Dari Menu Antrian Transaksi.", "system");
+    addLog("Menu thoát hàng đợi Giao dịch.", "system");
     clearInterval(queueUpdateInterval);
     container.destroy();
     queueMenuBox = null;
@@ -748,9 +748,9 @@ async function updateWalletData() {
     walletInfo.balanceUSDT  = ethers.formatUnits(balanceUSDT, 6);
 
     updateWallet();
-    addLog("Saldo & Wallet Updated !!", "system");
+    addLog("Cân bằng & Wallet Updated !!", "system");
   } catch (error) {
-    addLog("Gagal mengambil data wallet: " + error.message, "system");
+    addLog("thất bại lấy dữ liệu ví: " + error.message, "system");
   }
 }
 
@@ -802,7 +802,7 @@ async function endInitialRubicRequest(txHash, walletAddress, amount, swapToWMON)
       },
     });
 
-    addLog(`Rubic: Transaksi terkirim!! Tx Hash: ${getShortHash(txHash)}`, "rubic");
+    addLog(`Rubic: Giao dịch Đã gửi!! Tx Hash: ${getShortHash(txHash)}`, "rubic");
   } catch (error) {
     addLog(`Rubic: Error in initial Rubic API request: ${error.message}`, "rubic");
   }
@@ -812,7 +812,7 @@ async function executeSwap(index, total, wallet, swapToWMON, skipDelay = false) 
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const router = new ethers.Contract(ROUTER_ADDRESS, ROUTER_ABI, wallet);
   const amount = getRandomAmount();
-  addLog(`Rubic: Memulai swap ${swapToWMON ? "MON ➯ WMON" : "WMON ➯ MON"} dengan jumlah ${ethers.formatEther(amount)}`, "rubic");
+  addLog(`Rubic: Bắt đầu hoán đổi ${swapToWMON ? "MON ➯ WMON" : "WMON ➯ MON"} với số lượng ${ethers.formatEther(amount)}`, "rubic");
   try {
     const tx = swapToWMON
       ? await router.deposit({ value: amount })
@@ -823,10 +823,10 @@ async function executeSwap(index, total, wallet, swapToWMON, skipDelay = false) 
     addLog(`Rubic: Tx Confirmed!!!!`, "rubic");
     await sendRubicRequest(tx.hash, wallet.address, swapToWMON);
     await checkRubicRewards(wallet.address);
-    addLog(`Rubic: Transaksi ${index}/${total} selesai.`, "rubic");
+    addLog(`Rubic: Giao dịch ${index}/${total} hoàn thành.`, "rubic");
     await updateWalletData();
   } catch (error) {
-    addLog(`Rubic: Error pada transaksi ${index}: ${error.message}`, "rubic");
+    addLog(`Rubic: Lỗi trên Giao dịch ${index}: ${error.message}`, "rubic");
   }
 }
 async function checkRubicRewards(walletAddress) {
@@ -861,7 +861,7 @@ async function sendRubicRequest(txHash, walletAddress, swapToWMON) {
         Cookie: RUBIC_COOKIE,
       },
     });
-    addLog(`Rubic: Swap ${swapToWMON ? "MON ke WMON" : "WMON ke MON"} selesai!! Tx Hash: ${getShortHash(txHash)}`, "rubic");
+    addLog(`Rubic: Swap ${swapToWMON ? "MON sang WMON" : "WMON sang MON"} hoàn thành!! Tx Hash: ${getShortHash(txHash)}`, "rubic");
     addLog(`Rubic: Response API ${JSON.stringify(response.data)}`, "rubic");
   } catch (error) {
     addLog(`Rubic: Error notifying Rubic API: ${error.message}`, "rubic");
@@ -869,21 +869,21 @@ async function sendRubicRequest(txHash, walletAddress, swapToWMON) {
 }
 async function runAutoSwap() {
   promptBox.setFront();
-  promptBox.readInput("Masukkan jumlah swap Rubic:", "", async (err, value) => {
+  promptBox.readInput("Nhập số token swap Rubic:", "", async (err, value) => {
     promptBox.hide();
     screen.render();
     if (err || !value) {
-      addLog("Rubic: Input tidak valid atau dibatalkan.", "rubic");
+      addLog("Rubic: Đầu vào không hợp lệ hoặc bị hủy.", "rubic");
       return;
     }
     const loopCount = parseInt(value);
     if (isNaN(loopCount)) {
-      addLog("Rubic: Input tidak valid. Harus berupa angka.", "rubic");
+      addLog("Rubic: Đầu vào không hợp lệ. Phải là một con số.", "rubic");
       return;
     }
-    addLog(`Rubic: Anda memasukkan ${loopCount} kali auto swap Rubic.`, "rubic");
+    addLog(`Rubic: Bạn đã nhập ${loopCount} thời gian Tự động hoán đổi Rubic.`, "rubic");
     if (autoSwapRunning) {
-      addLog("Rubic: Transaksi sudah berjalan. Silahkan stop transaksi terlebih dahulu.", "rubic");
+      addLog("Rubic: Giao dịch đang chạy. Vui lòng stop Giao dịch Đầu tiên.", "rubic");
       return;
     }
     autoSwapRunning = true;
@@ -895,14 +895,14 @@ async function runAutoSwap() {
     let swapToWMON = true;
     for (let i = 1; i <= loopCount; i++) {
       if (autoSwapCancelled) {
-        addLog(`Rubic: Auto swap dihentikan pada iterasi ${i}.`, "rubic");
+        addLog(`Rubic: Tự động hoán đổi dừng lại ở lần lặp lại ${i}.`, "rubic");
         break;
       }
       await addTransactionToQueue(async (nonce) => {
         const provider = new ethers.JsonRpcProvider(RPC_URL);
         const router = new ethers.Contract(ROUTER_ADDRESS, ROUTER_ABI, globalWallet);
         const amount = getRandomAmount();
-        addLog(`Rubic: Memulai swap ${swapToWMON ? "MON ➯ WMON" : "WMON ➯ MON"} dengan jumlah ${ethers.formatEther(amount)}`, "rubic");
+        addLog(`Rubic: Bắt đầu hoán đổi ${swapToWMON ? "MON ➯ WMON" : "WMON ➯ MON"} với số lượng ${ethers.formatEther(amount)}`, "rubic");
         const tx = swapToWMON
           ? await router.deposit({ value: amount, nonce: nonce })
           : await router.withdraw(amount, { nonce: nonce });
@@ -913,16 +913,16 @@ async function runAutoSwap() {
         await sendRubicRequest(tx.hash, globalWallet.address, swapToWMON);
         await checkRubicRewards(globalWallet.address);
         await updateWalletData();
-      }, `Rubic Swap (${swapToWMON ? "MON->WMON" : "WMON->MON"}) - Iterasi ${i}`);
+      }, `Rubic Swap (${swapToWMON ? "MON->WMON" : "WMON->MON"}) - Lặp lại ${i}`);
       swapToWMON = !swapToWMON;
       if (i < loopCount) {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Rubic: Menunggu ${minutes} menit ${seconds} detik sebelum transaksi berikutnya...`, "rubic");
+        addLog(`Rubic: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "rubic");
         await waitWithCancel(delay, "rubic");
         if (autoSwapCancelled) {
-          addLog("Rubic: Auto swap dihentikan saat waktu tunggu.", "rubic");
+          addLog("Rubic: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "rubic");
           break;
         }
       }
@@ -931,14 +931,14 @@ async function runAutoSwap() {
     rubicSubMenu.setItems(getRubicMenuItems());
     mainMenu.setItems(getMainMenuItems());
     screen.render();
-    addLog("Rubic: Auto swap selesai.", "rubic");
+    addLog("Rubic: Tự động hoán đổi hoàn thành.", "rubic");
   });
 }
 function stopAutoSwap() {
   if (autoSwapRunning) {
     autoSwapCancelled = true;
   } else {
-    addLog("Rubic: Tidak ada transaksi yang berjalan.", "rubic");
+    addLog("Rubic: Không có bất kỳ Giao dịch nào đang hoạt động.", "rubic");
   }
 }
 
@@ -947,12 +947,12 @@ async function executeTayaSwapRouteWithAmount(index, total, wallet, path, inputI
   const swapContract = new ethers.Contract(TAYA_SWAP_CONTRACT, TAYA_SWAP_ABI, wallet);
   const expectedWETH = await swapContract.WETH();
   if (inputIsETH && path[0].toLowerCase() !== expectedWETH.toLowerCase()) {
-    addLog(`Taya: Error - Path harus diawali dengan alamat WETH: ${expectedWETH}`, "taya");
+    addLog(`Taya: Error - Đường dẫn phải bắt đầu bằng một địa chỉ WETH: ${expectedWETH}`, "taya");
     return;
   }
   const amountIn = amountInOverride;
   addLog(`Taya: Swap MON ➯ ${getTokenSymbol(path[1])}`, "taya");
-  addLog(`Taya: Memulai Swap dengan jumlah: ${ethers.formatEther(amountIn)}`, "taya");
+  addLog(`Taya: Bắt đầu hoán đổi với số lượng: ${ethers.formatEther(amountIn)}`, "taya");
   try {
     const amountOutMin = 0;
     const deadline = Math.floor(Date.now() / 1000) + 300;
@@ -982,9 +982,9 @@ async function executeTayaSwapRouteWithAmount(index, total, wallet, path, inputI
     await tx.wait();
     addLog(`Taya: Tx confirmed!! Tx Hash: ${getShortHash(txHash)}`, "taya");
     await updateWalletData();
-    addLog(`Taya: Transaksi ${index}/${total} selesai.`, "taya");
+    addLog(`Taya: Giao dịch ${index}/${total} hoàn thành.`, "taya");
   } catch (error) {
-    addLog(`Taya: Error pada transaksi ${index}: ${error.message}`, "taya");
+    addLog(`Taya: Lỗi trên Giao dịch ${index}: ${error.message}`, "taya");
   }
 }
 
@@ -992,7 +992,7 @@ async function executeWrapMonToWMON(index, total, wallet, amountInOverride) {
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const router = new ethers.Contract(ROUTER_ADDRESS, ROUTER_ABI, wallet);
   const amount = amountInOverride;
-  addLog(`Taya: Melakukan Swap MON ➯ WMON dengan jumlah: ${ethers.formatEther(amount)}`, "taya");
+  addLog(`Taya: Đang tiến hành Swap MON ➯ WMON với số lượng: ${ethers.formatEther(amount)}`, "taya");
   try {
     const tx = await router.deposit({ value: amount });
     const txHash = tx.hash;
@@ -1000,16 +1000,16 @@ async function executeWrapMonToWMON(index, total, wallet, amountInOverride) {
     await tx.wait();
     addLog(`Taya: Tx confirmed!! Tx Hash: ${getShortHash(txHash)}`, "taya");
     await updateWalletData();
-    addLog(`Taya: Transaksi ${index}/${total} selesai.`, "taya");
+    addLog(`Taya: Giao dịch ${index}/${total} hoàn thành.`, "taya");
   } catch (error) {
-    addLog(`Taya: Error pada wrap transaksi ${index}: ${error.message}`, "taya");
+    addLog(`Taya: Lỗi trên wrap Giao dịch ${index}: ${error.message}`, "taya");
   }
 }
 async function executeUnwrapWMONToMON(index, total, wallet, amountInOverride) {
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const router = new ethers.Contract(ROUTER_ADDRESS, ROUTER_ABI, wallet);
   const amount = amountInOverride;
-  addLog(`Taya: Melakukan Swap WMON ➯ MON dengan jumlah: ${ethers.formatEther(amount)}`, "taya");
+  addLog(`Taya: Đang tiến hành Swap WMON ➯ MON với số lượng: ${ethers.formatEther(amount)}`, "taya");
   try {
     const tx = await router.withdraw(amount);
     const txHash = tx.hash;
@@ -1017,29 +1017,29 @@ async function executeUnwrapWMONToMON(index, total, wallet, amountInOverride) {
     await tx.wait();
     addLog(`Taya: Tx confirmed!! Tx Hash: ${getShortHash(txHash)}`, "taya");
     await updateWalletData();
-    addLog(`Taya: Transaksi ${index}/${total} selesai.`, "taya");
+    addLog(`Taya: Giao dịch ${index}/${total} hoàn thành.`, "taya");
   } catch (error) {
-    addLog(`Taya: Error pada unwrap transaksi ${index}: ${error.message}`, "taya");
+    addLog(`Taya: Lỗi trên unwrap Giao dịch ${index}: ${error.message}`, "taya");
   }
 }
 
 async function runTayaAutoSwapRandom() {
   promptBox.setFront();
-  promptBox.readInput("Masukkan jumlah swap Taya (Random Token):", "", async (err, value) => {
+  promptBox.readInput("Nhập số token swap Taya (Random Token):", "", async (err, value) => {
     promptBox.hide();
     screen.render();
     if (err || !value) {
-      addLog("Taya: Input tidak valid atau dibatalkan.", "taya");
+      addLog("Taya: Đầu vào không hợp lệ hoặc bị hủy.", "taya");
       return;
     }
     const loopCount = parseInt(value);
     if (isNaN(loopCount)) {
-      addLog("Taya: Input tidak valid. Harus berupa angka.", "taya");
+      addLog("Taya: Đầu vào không hợp lệ. Phải là một con số.", "taya");
       return;
     }
-    addLog(`Taya: Anda memasukkan ${loopCount} kali auto swap Taya (Random Token).`, "taya");
+    addLog(`Taya: Bạn đã nhập ${loopCount} thời gian Tự động hoán đổi Taya (Random Token).`, "taya");
     if (tayaSwapRunning) {
-      addLog("Taya: Transaksi sudah berjalan. Silahkan stop transaksi terlebih dahulu.", "taya");
+      addLog("Taya: Giao dịch đang chạy. Vui lòng stop Giao dịch Đầu tiên.", "taya");
       return;
     }
     tayaSwapRunning = true;
@@ -1050,25 +1050,25 @@ async function runTayaAutoSwapRandom() {
     screen.render();
     for (let i = 1; i <= loopCount; i++) {
       if (tayaSwapCancelled) {
-        addLog(`Taya: Auto swap (Random Token) dihentikan pada iterasi ${i}.`, "taya");
+        addLog(`Taya: Tự động hoán đổi (Random Token) dừng lại ở lần lặp lại ${i}.`, "taya");
         break;
       }
       const randomToken = TOKENS[Math.floor(Math.random() * TOKENS.length)];
-      addLog(`Taya: Melakukan swap MON ➯ ${getTokenSymbol(randomToken)}`, "taya");
+      addLog(`Taya: Đang tiến hành swap MON ➯ ${getTokenSymbol(randomToken)}`, "taya");
       const path = [WMON_ADDRESS, randomToken];
       const amountIn = getRandomAmountTaya();
-      addLog(`Taya: Menggunakan jumlah: ${ethers.formatEther(amountIn)}`, "taya");
+      addLog(`Taya: MenggunSẽ jumlah: ${ethers.formatEther(amountIn)}`, "taya");
       await addTransactionToQueue(async (nonce) => {
         await executeTayaSwapRouteWithAmount(i, loopCount, globalWallet, path, true, amountIn, nonce);
-      }, `Taya Random Swap - Iterasi ${i}`);
+      }, `Taya Random Swap - Lặp lại ${i}`);
       if (i < loopCount) {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Taya: Menunggu ${minutes} menit ${seconds} detik sebelum transaksi berikutnya...`, "taya");
+        addLog(`Taya: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "taya");
         await waitWithCancel(delay, "taya");
         if (tayaSwapCancelled) {
-          addLog("Taya: Auto swap (Random Token) dihentikan saat waktu tunggu.", "taya");
+          addLog("Taya: Tự động hoán đổi (Random Token) dừng lại trong thời gian chờ đợi.", "taya");
           break;
         }
       }
@@ -1077,28 +1077,28 @@ async function runTayaAutoSwapRandom() {
     mainMenu.setItems(getMainMenuItems());
     tayaSubMenu.setItems(getTayaMenuItems());
     screen.render();
-    addLog("Taya: Auto swap (Random Token) selesai.", "taya");
+    addLog("Taya: Tự động hoán đổi (Random Token) hoàn thành.", "taya");
   });
 }
 
 
 async function runTayaWrapCycle() {
   promptBox.setFront();
-  promptBox.readInput("Masukkan jumlah swap Taya (MON & WMON):", "", async (err, value) => {
+  promptBox.readInput("Nhập số token swap Taya (MON & WMON):", "", async (err, value) => {
     promptBox.hide();
     screen.render();
     if (err || !value) {
-      addLog("Taya: Input tidak valid atau dibatalkan.", "taya");
+      addLog("Taya: Đầu vào không hợp lệ hoặc bị hủy.", "taya");
       return;
     }
     const loopCount = parseInt(value);
     if (isNaN(loopCount)) {
-      addLog("Taya: Input tidak valid. Harus berupa angka.", "taya");
+      addLog("Taya: Đầu vào không hợp lệ. Phải là một con số.", "taya");
       return;
     }
-    addLog(`Taya: Anda memasukkan ${loopCount} cycle untuk swap Taya (MON & WMON).`, "taya");
+    addLog(`Taya: Bạn đã nhập ${loopCount} cycle vì swap Taya (MON & WMON).`, "taya");
     if (tayaSwapRunning) {
-      addLog("Taya: Transaksi sudah berjalan. Silahkan stop transaksi terlebih dahulu.", "taya");
+      addLog("Taya: Giao dịch đang chạy. Vui lòng stop Giao dịch Đầu tiên.", "taya");
       return;
     }
     tayaSwapRunning = true;
@@ -1109,7 +1109,7 @@ async function runTayaWrapCycle() {
     screen.render();
     for (let i = 1; i <= loopCount; i++) {
       if (tayaSwapCancelled) {
-        addLog(`Taya: Cycle swap dihentikan pada iterasi ${i}.`, "taya");
+        addLog(`Taya: Cycle swap dừng lại ở lần lặp lại ${i}.`, "taya");
         break;
       }
       const amountIn = getRandomAmountTaya();
@@ -1120,9 +1120,9 @@ async function runTayaWrapCycle() {
         if (monBalance < amountIn) {
           if (wmonBalance >= amountIn) {
             operation = "unwrap";
-            addLog("Taya: Saldo MON tidak mencukupi, fallback ke unwrap.", "taya");
+            addLog("Taya: Cân bằng MON không đủ.", "taya");
           } else {
-            addLog(`Taya: Cycle ${i}: Saldo MON dan WMON tidak mencukupi.`, "taya");
+            addLog(`Taya: Cycle ${i}: Cân bằng MON dan WMON không đủ.`, "taya");
             continue;
           }
         }
@@ -1130,9 +1130,9 @@ async function runTayaWrapCycle() {
         if (wmonBalance < amountIn) {
           if (monBalance >= amountIn) {
             operation = "wrap";
-            addLog("Taya: Saldo WMON tidak mencukupi, fallback ke wrap.", "taya");
+            addLog("Taya: Cân bằng WMON không đủ.", "taya");
           } else {
-            addLog(`Taya: Cycle ${i}: Saldo WMON dan MON tidak mencukupi.`, "taya");
+            addLog(`Taya: Cycle ${i}: Cân bằng WMON dan MON không đủ.`, "taya");
             continue;
           }
         }
@@ -1162,10 +1162,10 @@ async function runTayaWrapCycle() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Taya: Menunggu ${minutes} menit ${seconds} detik sebelum cycle berikutnya...`, "taya");
+        addLog(`Taya: Chờ  ${minutes} phút ${seconds} vài giây trước cycle Kế tiếp...`, "taya");
         await waitWithCancel(delay, "taya");
         if (tayaSwapCancelled) {
-          addLog("Taya: Cycle swap dihentikan saat waktu tunggu.", "taya");
+          addLog("Taya: Cycle swap dừng lại trong thời gian chờ đợi.", "taya");
           break;
         }
       }
@@ -1174,7 +1174,7 @@ async function runTayaWrapCycle() {
     mainMenu.setItems(getMainMenuItems());
     tayaSubMenu.setItems(getTayaMenuItems());
     screen.render();
-    addLog("Taya: Swap (MON & WMON) selesai.", "taya");
+    addLog("Taya: Swap (MON & WMON) hoàn thành.", "taya");
   });
 }
 function runTayaSwap() {
@@ -1212,14 +1212,14 @@ async function sendTradeHistoryWithRetry(txHash, wallet, amountIn, swapToWMON = 
           "Authorization": `Bearer ${HEDGEMONY_BEARER}`
         }
       });
-      addLog(`Hedgemony: Trade history berhasil dikirim`, "hedgemony");
+      addLog(`Hedgemony: Trade history đã gửi thành công`, "hedgemony");
       return;
     } catch (error) {
-      addLog(`Hedgemony: Gagal mengirim trade history (attempt ${attempt}): ${error.message}`, "hedgemony");
+      addLog(`Hedgemony: thất bại mengirim trade history (attempt ${attempt}): ${error.message}`, "hedgemony");
       if (attempt < retries) {
         await new Promise(resolve => setTimeout(resolve, delayMs));
       } else {
-        addLog("Hedgemony: Semua percobaan retry trade history gagal.", "hedgemony");
+        addLog("Hedgemony: Tất cả kiểm tra retry trade history thất bại.", "hedgemony");
       }
     }
   }
@@ -1263,14 +1263,14 @@ async function sendHedgeTradeHistoryWithRetry(txHash, wallet, amountValue, swapT
           "Authorization": `Bearer ${HEDGEMONY_BEARER}`
         }
       });
-      addLog(`Hedge Swap: Trade history berhasil dikirim`, "hedgemony");
+      addLog(`Hedge Swap: Trade history đã gửi thành công`, "hedgemony");
       return;
     } catch (error) {
-      addLog(`Hedge Swap: Gagal mengirim trade history (attempt ${attempt}): ${error.message}`, "hedgemony");
+      addLog(`Hedge Swap: thất bại mengirim trade history (attempt ${attempt}): ${error.message}`, "hedgemony");
       if (attempt < retries) {
         await new Promise(resolve => setTimeout(resolve, delayMs));
       } else {
-        addLog("Hedge Swap: Semua percobaan retry trade history gagal.", "hedgemony");
+        addLog("Hedge Swap: Tất cả kiểm tra retry trade history thất bại.", "hedgemony");
       }
     }
   }
@@ -1279,20 +1279,20 @@ async function sendHedgeTradeHistoryWithRetry(txHash, wallet, amountValue, swapT
 
 async function runHedgeSwap() {
   promptBox.setFront();
-  promptBox.readInput("Masukkan jumlah cycle swap Mon & HEDGE:", "", async (err, value) => {
+  promptBox.readInput("Nhập số token cycle swap Mon & HEDGE:", "", async (err, value) => {
     promptBox.hide();
     screen.render();
     if (err || !value) {
-      addLog("Hedge Swap: Input tidak valid atau dibatalkan.", "hedgemony");
+      addLog("Hedge Swap: Đầu vào không hợp lệ hoặc bị hủy.", "hedgemony");
       return;
     }
     const loopCount = parseInt(value);
     if (isNaN(loopCount) || loopCount <= 0) {
-      addLog("Hedge Swap: Input tidak valid. Harus berupa angka positif.", "hedgemony");
+      addLog("Hedge Swap: Đầu vào không hợp lệ. Phải là một con số positif.", "hedgemony");
       return;
     }
     if (hedgemonySwapRunning) {
-      addLog("Hedge Swap: Transaksi sudah berjalan. Silahkan stop transaksi terlebih dahulu.", "hedgemony");
+      addLog("Hedge Swap: Giao dịch đang chạy. Vui lòng stop Giao dịch Đầu tiên.", "hedgemony");
       return;
     }
     hedgemonySwapRunning = true;
@@ -1302,34 +1302,34 @@ async function runHedgeSwap() {
     hedgemonySubMenu.show();
     hedgemonySubMenu.focus();
     screen.render();
-    addLog(`Hedge Swap: Mulai auto swap sebanyak ${loopCount} cycle.`, "hedgemony");
+    addLog(`Hedge Swap: Bắt đầu Tự động hoán đổi  ${loopCount} cycle.`, "hedgemony");
 
     for (let i = 1; i <= loopCount; i++) {
       if (hedgemonySwapCancelled) {
-        addLog(`Hedge Swap: Auto swap dihentikan pada cycle ke-${i}.`, "hedgemony");
+        addLog(`Hedge Swap: Tự động hoán đổi dừng lại ở chu kỳ-${i}.`, "hedgemony");
         break;
       }
       let amountBN;
       const swapToHEDGE = (i % 2 === 1);
       if (swapToHEDGE) {
         amountBN = getRandomAmountMonToHedge();
-        addLog(`Hedge Swap: Cycle ${i}: Akan swap MON -> HEDGE sebesar ${ethers.formatEther(amountBN)} MON`, "hedgemony");
+        addLog(`Hedge Swap: Cycle ${i}: Sẽ swap MON -> HEDGE sebesar ${ethers.formatEther(amountBN)} MON`, "hedgemony");
       } else {
         amountBN = getRandomAmountHedgeToMon();
-        addLog(`Hedge Swap: Cycle ${i}: Akan swap HEDGE -> MON sebesar ${ethers.formatUnits(amountBN, 18)} HEDGE`, "hedgemony");
+        addLog(`Hedge Swap: Cycle ${i}: Sẽ swap HEDGE -> MON sebesar ${ethers.formatUnits(amountBN, 18)} HEDGE`, "hedgemony");
         const hedgeContract = new ethers.Contract(HEDGE_ADDRESS, ERC20_ABI_APPROVE, globalWallet);
         const hedgeBalance = await hedgeContract.balanceOf(globalWallet.address);
         if (hedgeBalance < amountBN) {
-          addLog(`Hedge Swap: Saldo HEDGE tidak cukup. Skip cycle ${i}.`, "hedgemony");
+          addLog(`Hedge Swap: Cân bằng HEDGE không đủ. Skip cycle ${i}.`, "hedgemony");
           continue;
         }
         const currentAllowance = await hedgeContract.allowance(globalWallet.address, HEDGEMONY_SWAP_CONTRACT);
         if (currentAllowance < amountBN) {
-          addLog("Hedge Swap: Allowance HEDGE tidak mencukupi, melakukan approve...", "hedgemony");
+          addLog("Hedge Swap: Allowance HEDGE không đủ, Đang tiến hành approve...", "hedgemony");
           const approveTx = await hedgeContract.approve(HEDGEMONY_SWAP_CONTRACT, ethers.MaxUint256);
           addLog(`Hedge Swap: Approval tx dikirim: ${getShortHash(approveTx.hash)}`, "hedgemony");
           await approveTx.wait();
-          addLog("Hedge Swap: Approval berhasil.", "hedgemony");
+          addLog("Hedge Swap: Approval thành công.", "hedgemony");
         }
       }
 
@@ -1370,7 +1370,7 @@ async function runHedgeSwap() {
         });
         const multicallTx = apiResponse.data.multicallTx;
         if (!multicallTx || !multicallTx.to || !multicallTx.data) {
-          addLog(`Hedge Swap: Data transaksi tidak lengkap.`, "hedgemony");
+          addLog(`Hedge Swap: Data Giao dịch chưa hoàn thành.`, "hedgemony");
         } else {
           await addTransactionToQueue(async (nonce) => {
             const tx = await globalWallet.sendTransaction({
@@ -1385,7 +1385,7 @@ async function runHedgeSwap() {
             await updateWalletData();
             await sendHedgeTradeHistoryWithRetry(tx.hash, globalWallet, amountStr, swapToHEDGE);
           }, "Hedge Swap");
-          addLog(`Hedge Swap: Cycle ${i} selesai.`, "hedgemony");
+          addLog(`Hedge Swap: Cycle ${i} hoàn thành.`, "hedgemony");
         }
       } catch (error) {
         if (error.response && error.response.data) {
@@ -1398,10 +1398,10 @@ async function runHedgeSwap() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Hedge Swap: Menunggu ${minutes} menit ${seconds} detik sebelum cycle berikutnya...`, "hedgemony");
+        addLog(`Hedge Swap: Chờ  ${minutes} phút ${seconds} vài giây trước cycle Kế tiếp...`, "hedgemony");
         await waitWithCancel(delay, "hedgemony");
         if (hedgemonySwapCancelled) {
-          addLog("Hedge Swap: Auto swap dihentikan saat waktu tunggu.", "hedgemony");
+          addLog("Hedge Swap: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "hedgemony");
           break;
         }
       }
@@ -1410,27 +1410,27 @@ async function runHedgeSwap() {
     hedgemonySubMenu.setItems(getHedgemonyMenuItems());
     mainMenu.setItems(getMainMenuItems());
     screen.render();
-    addLog("Hedge Swap: Auto swap selesai.", "hedgemony");
+    addLog("Hedge Swap: Tự động hoán đổi hoàn thành.", "hedgemony");
   });
 }
 
 
 async function runHedgemonySwap() {
   promptBox.setFront();
-  promptBox.readInput("Masukkan jumlah swap Hedgemony :", "", async (err, value) => {
+  promptBox.readInput("Nhập số token swap Hedgemony :", "", async (err, value) => {
     promptBox.hide();
     screen.render();
     if (err || !value) {
-      addLog("Hedgemony: Input tidak valid atau dibatalkan.", "hedgemony");
+      addLog("Hedgemony: Đầu vào không hợp lệ hoặc bị hủy.", "hedgemony");
       return;
     }
     const loopCount = parseInt(value);
     if (isNaN(loopCount) || loopCount <= 0) {
-      addLog("Hedgemony: Input tidak valid. Harus berupa angka positif.", "hedgemony");
+      addLog("Hedgemony: Đầu vào không hợp lệ. Phải là một con số positif.", "hedgemony");
       return;
     }
     if (hedgemonySwapRunning) {
-      addLog("Hedgemony: Transaksi sudah berjalan. Silahkan stop transaksi terlebih dahulu.", "hedgemony");
+      addLog("Hedgemony: Giao dịch đang chạy. Vui lòng stop Giao dịch Đầu tiên.", "hedgemony");
       return;
     }
     hedgemonySwapRunning = true;
@@ -1440,11 +1440,11 @@ async function runHedgemonySwap() {
     hedgemonySubMenu.show();
     hedgemonySubMenu.focus();
     screen.render();
-    addLog(`Hedgemony: Mulai auto swap sebanyak ${loopCount} kali.`, "hedgemony");
+    addLog(`Hedgemony: Bắt đầu Tự động hoán đổi  ${loopCount} thời gian.`, "hedgemony");
     const wmonContract = new ethers.Contract(WMON_ADDRESS, ERC20_ABI_APPROVE, globalWallet);
     for (let i = 1; i <= loopCount; i++) {
       if (hedgemonySwapCancelled) {
-        addLog(`Hedgemony: Auto swap dihentikan pada iterasi ${i}.`, "hedgemony");
+        addLog(`Hedgemony: Tự động hoán đổi dừng lại ở lần lặp lại ${i}.`, "hedgemony");
         break;
       }
       const swapToWMON = (i % 2 === 1);
@@ -1452,21 +1452,21 @@ async function runHedgemonySwap() {
       const amountStr = amountBN.toString();
       if (!swapToWMON) {
         const wmonBalance = await wmonContract.balanceOf(globalWallet.address);
-        addLog(`Hedgemony: Akan swap WMON ➯ MON sebesar ${ethers.formatEther(amountBN)}`, "hedgemony");
+        addLog(`Hedgemony: Sẽ swap WMON ➯ MON sebesar ${ethers.formatEther(amountBN)}`, "hedgemony");
         if (wmonBalance < amountBN) {
-          addLog(`Hedgemony: Saldo WMON tidak cukup. Skip iterasi ${i}.`, "hedgemony");
+          addLog(`Hedgemony: Cân bằng WMON không đủ. Skip Lặp lại ${i}.`, "hedgemony");
           continue;
         }
         const currentAllowance = await wmonContract.allowance(globalWallet.address, HEDGEMONY_SWAP_CONTRACT);
         if (currentAllowance < amountBN) {
-          addLog("Hedgemony: Allowance WMON tidak mencukupi, melakukan approve...", "hedgemony");
+          addLog("Hedgemony: Allowance WMON không đủ, Đang tiến hành approve...", "hedgemony");
           const approveTx = await wmonContract.approve(HEDGEMONY_SWAP_CONTRACT, ethers.MaxUint256);
           addLog(`Hedgemony: Approval tx dikirim: ${getShortHash(approveTx.hash)}`, "hedgemony");
           await approveTx.wait();
-          addLog("Hedgemony: Approval berhasil.", "hedgemony");
+          addLog("Hedgemony: Approval thành công.", "hedgemony");
         }
       } else {
-        addLog(`Hedgemony: Akan swap MON ➯ WMON sebesar ${ethers.formatEther(amountBN)}`, "hedgemony");
+        addLog(`Hedgemony: Sẽ swap MON ➯ WMON sebesar ${ethers.formatEther(amountBN)}`, "hedgemony");
       }
       let payload;
       if (swapToWMON) {
@@ -1503,7 +1503,7 @@ async function runHedgemonySwap() {
         });
         const multicallTx = apiResponse.data.multicallTx;
         if (!multicallTx || !multicallTx.to || !multicallTx.data) {
-          addLog(`Hedgemony: Data transaksi tidak lengkap.`, "hedgemony");
+          addLog(`Hedgemony: Data Giao dịch chưa hoàn thành.`, "hedgemony");
         } else {
           await addTransactionToQueue(async (nonce) => {
             const tx = await globalWallet.sendTransaction({
@@ -1518,7 +1518,7 @@ async function runHedgemonySwap() {
             await sendTradeHistoryWithRetry(tx.hash, globalWallet, amountStr, swapToWMON);
             await updateWalletData();
           }, "Hedgemony Swap");
-          addLog(`Hedgemony: ${i}/${loopCount} Swap selesai.`, "hedgemony");
+          addLog(`Hedgemony: ${i}/${loopCount} Swap hoàn thành.`, "hedgemony");
         }
       } catch (error) {
         if (error.response && error.response.data) {
@@ -1531,10 +1531,10 @@ async function runHedgemonySwap() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`HedgemonySwap: Menunggu ${minutes} menit ${seconds} detik sebelum transaksi berikutnya...`, "hedgemony");
+        addLog(`HedgemonySwap: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "hedgemony");
         await waitWithCancel(delay, "hedgemony");
         if (hedgemonySwapCancelled) {
-          addLog("Hedgemony: Auto swap dihentikan saat waktu tunggu.", "hedgemony");
+          addLog("Hedgemony: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "hedgemony");
           break;
         }
       }
@@ -1543,37 +1543,37 @@ async function runHedgemonySwap() {
     hedgemonySubMenu.setItems(getHedgemonyMenuItems());
     mainMenu.setItems(getMainMenuItems());
     screen.render();
-    addLog("Hedgemony: Auto swap selesai.", "hedgemony");
+    addLog("Hedgemony: Tự động hoán đổi hoàn thành.", "hedgemony");
   });
 }
 function stopHedgemonySwap() {
   if (hedgemonySwapRunning) {
     hedgemonySwapCancelled = true;
-    addLog("Hedgemony: Perintah Stop Transaction diterima.", "hedgemony");
+    addLog("Hedgemony: Yêu cầu Dừng giao dịch diterima.", "hedgemony");
   } else {
-    addLog("Hedgemony: Tidak ada transaksi yang berjalan.", "hedgemony");
+    addLog("Hedgemony: Không có bất kỳ Giao dịch nào đang hoạt động.", "hedgemony");
   }
 }
 
 async function runMondaSwapMonDak() {
     promptBox.setFront();
-    promptBox.readInput("Masukkan jumlah cycle untuk swap MON & DAK:", "", async (err, value) => {
+    promptBox.readInput("Nhập số token cycle vì swap MON & DAK:", "", async (err, value) => {
       promptBox.hide();
       mondaSubMenu.show();
       mondaSubMenu.focus();
       screen.render();
       if (err || !value) {
-        addLog("MondaSwap: Input tidak valid atau dibatalkan.", "monda");
+        addLog("MondaSwap: Đầu vào không hợp lệ hoặc bị hủy.", "monda");
         return;
       }
       const loopCount = parseInt(value);
       if (isNaN(loopCount)) {
-        addLog("MondaSwap: Input tidak valid. Harus berupa angka.", "monda");
+        addLog("MondaSwap: Đầu vào không hợp lệ. Phải là một con số.", "monda");
         return;
       }
-      addLog(`MondaSwap: Anda memasukkan ${loopCount} cycle untuk swap MON & DAK.`, "monda");
+      addLog(`MondaSwap: Bạn đã nhập ${loopCount} cycle vì swap MON & DAK.`, "monda");
       if (mondaSwapRunning) {
-        addLog("MondaSwap: Transaksi sudah berjalan. Silahkan stop transaksi terlebih dahulu.", "monda");
+        addLog("MondaSwap: Giao dịch đang chạy. Vui lòng stop Giao dịch Đầu tiên.", "monda");
         return;
       }
       mondaSwapRunning = true;
@@ -1594,21 +1594,21 @@ async function runMondaSwapMonDak() {
 
       for (let i = 1; i <= loopCount; i++) {
         if (mondaSwapCancelled) {
-          addLog(`MondaSwap: Auto swap MON & DAK dihentikan pada iterasi ${i}.`, "monda");
+          addLog(`MondaSwap: Tự động hoán đổi MON & DAK dừng lại ở lần lặp lại ${i}.`, "monda");
           break;
         }
         if (i % 2 === 1) {
           const amountIn = getRandomAmountMonForSwap();
           const balanceMON = await provider.getBalance(globalWallet.address);
           if (balanceMON < amountIn) {
-            addLog(`Monda: Saldo MON tidak cukup untuk swap MON → DAK.`, "monda");
+            addLog(`Monda: Cân bằng MON không đủ vì swap MON → DAK.`, "monda");
             continue;
           }
           const expectedOutput = getRandomAmountDakForSwap(); 
           const amountOutMin = (expectedOutput * 980n) / 1000n;
           const deadline = Math.floor(Date.now() / 1000) + 300;
           let path = [routerWETH, DAK_ADDRESS];
-          addLog(`Monda: Swap MON ➯ DAK Dengan Jumlah ${ethers.formatEther(amountIn)} MON`, "monda");
+          addLog(`Monda: Swap MON ➯ DAK với số lượng ${ethers.formatEther(amountIn)} MON`, "monda");
           await addTransactionToQueue(async (nonce) => {
             const tx = await mondaRouter.swapExactETHForTokens(
               amountOutMin,
@@ -1627,7 +1627,7 @@ async function runMondaSwapMonDak() {
           const tokenContract = new ethers.Contract(DAK_ADDRESS, ERC20_ABI, provider);
           const tokenBalance = await tokenContract.balanceOf(globalWallet.address);
           if (tokenBalance < amountIn) {
-            addLog(`Monda: Saldo DAK tidak cukup untuk swap DAK → MON.`, "monda");
+            addLog(`Monda: Cân bằng DAK không đủ vì swap DAK → MON.`, "monda");
             continue;
           }
           const tokenContractApprove = new ethers.Contract(DAK_ADDRESS, ERC20_ABI_APPROVE, globalWallet);
@@ -1636,13 +1636,13 @@ async function runMondaSwapMonDak() {
             addLog(`Monda: Approving DAK...`, "monda");
             const approveTx = await tokenContractApprove.approve("0xc80585f78A6e44fb46e1445006f820448840386e", ethers.MaxUint256);
             await approveTx.wait();
-            addLog(`Monda: Approval DAK berhasil.`, "monda");
+            addLog(`Monda: Approval DAK thành công.`, "monda");
           }
           const expectedOutput = getRandomAmountMonForSwap(); 
           const amountOutMin = (expectedOutput * 980n) / 1000n;
           const deadline = Math.floor(Date.now() / 1000) + 300;
           let path = [DAK_ADDRESS, routerWETH];
-          addLog(`Monda: Swap DAK ➯ MON Dengan Jumlah ${ethers.formatUnits(amountIn,18)} DAK`, "monda");
+          addLog(`Monda: Swap DAK ➯ MON với số lượng ${ethers.formatUnits(amountIn,18)} DAK`, "monda");
           await addTransactionToQueue(async (nonce) => {
             const tx = await mondaRouter.swapExactTokensForETH(
               amountIn,
@@ -1662,11 +1662,11 @@ async function runMondaSwapMonDak() {
           const delay = getRandomDelay();
           const minutes = Math.floor(delay / 60000);
           const seconds = Math.floor((delay % 60000) / 1000);
-          addLog(`MondaSwap:Cycle Ke ${i} Selesai`);
-          addLog(`MondaSwap: Menunggu ${minutes} menit ${seconds} detik sebelum cycle berikutnya...`, "monda");
+          addLog(`MondaSwap:Cycle Ke ${i} hoàn thành`);
+          addLog(`MondaSwap: Chờ  ${minutes} phút ${seconds} vài giây trước cycle Kế tiếp...`, "monda");
           await waitWithCancel(delay, "monda");
           if (mondaSwapCancelled) {
-            addLog(`Monda: Auto swap dihentikan saat waktu tunggu.`, "monda");
+            addLog(`Monda: Tự động hoán đổi dừng lại trong thời gian chờ đợi.`, "monda");
             break;
           }
         }
@@ -1675,7 +1675,7 @@ async function runMondaSwapMonDak() {
       mainMenu.setItems(getMainMenuItems());
       mondaSubMenu.setItems(getMondaMenuItems());
       screen.render();
-      addLog("MondaSwap: Auto swap MON & DAK selesai.", "monda");
+      addLog("MondaSwap: Tự động hoán đổi MON & DAK hoàn thành.", "monda");
       mondaSubMenu.focus();
     });
   }
@@ -1684,21 +1684,21 @@ async function runMondaSwapMonDak() {
 async function runMondaSwapMonUsdcUsdt() {
   promptBox.show();
   promptBox.setFront();
-  promptBox.readInput("Masukkan jumlah cycle untuk swap MON/USDC/USDT:", "", async (err, value) => {
+  promptBox.readInput("Nhập số token cycle vì swap MON/USDC/USDT:", "", async (err, value) => {
     promptBox.hide();
     mondaSubMenu.show();
     mondaSubMenu.focus();
     screen.render();
     if (err || !value) {
-      addLog("MondaSwap: Input tidak valid atau dibatalkan.", "monda");
+      addLog("MondaSwap: Đầu vào không hợp lệ hoặc bị hủy.", "monda");
       return;
     }
     const loopCount = parseInt(value);
     if (isNaN(loopCount)) {
-      addLog("MondaSwap: Input tidak valid. Harus berupa angka.", "monda");
+      addLog("MondaSwap: Đầu vào không hợp lệ. Phải là một con số.", "monda");
       return;
     }
-    addLog(`MondaSwap: Anda memasukkan ${loopCount} cycle untuk swap MON/USDC/USDT.`, "monda");
+    addLog(`MondaSwap: Bạn đã nhập ${loopCount} cycle vì swap MON/USDC/USDT.`, "monda");
 
     mondaSwapRunning = true;
     mondaSwapCancelled = false;
@@ -1718,7 +1718,7 @@ async function runMondaSwapMonUsdcUsdt() {
 
     for (let i = 1; i <= loopCount; i++) {
       if (mondaSwapCancelled) {
-        addLog(`MondaSwap: Auto swap MON/USDC/USDT dihentikan pada iterasi ${i}.`, "monda");
+        addLog(`MondaSwap: Tự động hoán đổi MON/USDC/USDT dừng lại ở lần lặp lại ${i}.`, "monda");
         break;
       }
 
@@ -1729,14 +1729,14 @@ async function runMondaSwapMonUsdcUsdt() {
         const amountIn = getRandomAmountMonForUsdcUsdt();
         const balanceMON = await provider.getBalance(globalWallet.address);
         if (balanceMON < amountIn) {
-          addLog(`Monda: Saldo MON tidak cukup untuk swap MON → ${useUSDC ? "USDC" : "USDT"}.`, "monda");
+          addLog(`Monda: Cân bằng MON không đủ vì swap MON → ${useUSDC ? "USDC" : "USDT"}.`, "monda");
           continue;
         }
         const expectedOutput = useUSDC ? getRandomAmountUsdcForSwap() : getRandomAmountUsdtForSwap();
         const amountOutMin = 0n;
         const deadline = Math.floor(Date.now() / 1000) + 300;
         const path = [routerWETH, targetToken];
-        addLog(`Monda: Swap MON ➯ ${useUSDC ? "USDC" : "USDT"} Dengan Jumlah: ${ethers.formatEther(amountIn)} MON`, "monda");
+        addLog(`Monda: Swap MON ➯ ${useUSDC ? "USDC" : "USDT"} với số lượng: ${ethers.formatEther(amountIn)} MON`, "monda");
         await addTransactionToQueue(async (nonce) => {
           const tx = await mondaRouter.swapExactETHForTokens(
             amountOutMin,
@@ -1756,7 +1756,7 @@ async function runMondaSwapMonUsdcUsdt() {
         const tokenContract = new ethers.Contract(targetToken, ERC20_ABI, provider);
         const tokenBalance = await tokenContract.balanceOf(globalWallet.address);
         if (tokenBalance < amountIn) {
-          addLog(`Monda: Saldo ${useUSDC ? "USDC" : "USDT"} tidak cukup untuk swap ke MON.`, "monda");
+          addLog(`Monda: Cân bằng ${useUSDC ? "USDC" : "USDT"} không đủ vì swap ke MON.`, "monda");
           continue;
         }
         const tokenContractApprove = new ethers.Contract(targetToken, ERC20_ABI_APPROVE, globalWallet);
@@ -1765,13 +1765,13 @@ async function runMondaSwapMonUsdcUsdt() {
           addLog(`Monda: Approving ${useUSDC ? "USDC" : "USDT"}...`, "monda");
           const approveTx = await tokenContractApprove.approve("0xc80585f78A6e44fb46e1445006f820448840386e", ethers.MaxUint256);
           await approveTx.wait();
-          addLog(`Monda: Approval ${useUSDC ? "USDC" : "USDT"} berhasil.`, "monda");
+          addLog(`Monda: Approval ${useUSDC ? "USDC" : "USDT"} thành công.`, "monda");
         }
         const expectedOutput = getRandomAmountMonForUsdcUsdt();
         const amountOutMin = 0n; 
         const deadline = Math.floor(Date.now() / 1000) + 300;
         const path = [targetToken, routerWETH];
-        addLog(`Monda: Swap ${useUSDC ? "USDC" : "USDT"} ➯ MON Dengan Jumlah: ${ethers.formatUnits(amountIn, decimals)} ${useUSDC ? "USDC" : "USDT"}`, "monda");
+        addLog(`Monda: Swap ${useUSDC ? "USDC" : "USDT"} ➯ MON với số lượng: ${ethers.formatUnits(amountIn, decimals)} ${useUSDC ? "USDC" : "USDT"}`, "monda");
         await addTransactionToQueue(async (nonce) => {
           const tx = await mondaRouter.swapExactTokensForETH(
             amountIn,
@@ -1791,11 +1791,11 @@ async function runMondaSwapMonUsdcUsdt() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Monda: Cycle Ke ${i} Selesai`);
-        addLog(`Monda: Menunggu ${minutes} menit ${seconds} detik sebelum cycle berikutnya...`, "monda");
+        addLog(`Monda: Cycle Ke ${i} hoàn thành`);
+        addLog(`Monda: Chờ  ${minutes} phút ${seconds} vài giây trước cycle Kế tiếp...`, "monda");
         await waitWithCancel(delay, "monda");
         if (mondaSwapCancelled) {
-          addLog(`Monda: Auto swap dihentikan saat waktu tunggu.`, "monda");
+          addLog(`Monda: Tự động hoán đổi dừng lại trong thời gian chờ đợi.`, "monda");
           break;
         }
       }
@@ -1804,7 +1804,7 @@ async function runMondaSwapMonUsdcUsdt() {
     mainMenu.setItems(getMainMenuItems());
     mondaSubMenu.setItems(getMondaMenuItems());
     screen.render();
-    addLog("MondaSwap: Auto swap MON/USDC/USDT selesai.", "monda");
+    addLog("MondaSwap: Tự động hoán đổi MON/USDC/USDT hoàn thành.", "monda");
     mondaSubMenu.focus();
   });
 }
@@ -1812,23 +1812,23 @@ async function runMondaSwapMonUsdcUsdt() {
 
 async function runMondaSwapMonMonda() {
   promptBox.setFront();
-  promptBox.readInput("Masukkan jumlah swap Monda (Mon & Monda):", "", async (err, value) => {
+  promptBox.readInput("Nhập số token swap Monda (Mon & Monda):", "", async (err, value) => {
     promptBox.hide();
     mondaSubMenu.show();
     mondaSubMenu.focus();
     screen.render();
     if (err || !value) {
-      addLog("MondaSwap: Input tidak valid atau dibatalkan.", "monda");
+      addLog("MondaSwap: Đầu vào không hợp lệ hoặc bị hủy.", "monda");
       return;
     }
     const loopCount = parseInt(value);
     if (isNaN(loopCount)) {
-      addLog("MondaSwap: Input tidak valid. Harus berupa angka.", "monda");
+      addLog("MondaSwap: Đầu vào không hợp lệ. Phải là một con số.", "monda");
       return;
     }
-    addLog(`MondaSwap: Anda memasukkan ${loopCount} kali auto swap Mon & Monda.`, "monda");
+    addLog(`MondaSwap: Bạn đã nhập ${loopCount} thời gian Tự động hoán đổi Mon & Monda.`, "monda");
     if (mondaSwapRunning) {
-      addLog("MondaSwap: Transaksi sudah berjalan. Silahkan stop transaksi terlebih dahulu.", "monda");
+      addLog("MondaSwap: Giao dịch đang chạy. Vui lòng stop Giao dịch Đầu tiên.", "monda");
       return;
     }
     mondaSwapRunning = true;
@@ -1840,22 +1840,22 @@ async function runMondaSwapMonMonda() {
     screen.render();
     for (let i = 1; i <= loopCount; i++) {
       if (mondaSwapCancelled) {
-        addLog(`MondaSwap: Auto swap Mon & Monda dihentikan pada iterasi ${i}.`, "monda");
+        addLog(`MondaSwap: Tự động hoán đổi Mon & Monda dừng lại ở lần lặp lại ${i}.`, "monda");
         break;
       }
       await addTransactionToQueue(async (nonce) => {
-        addLog(`MondaSwap: Iterasi ${i}: Melakukan swap Mon & Monda.`, "monda");
+        addLog(`MondaSwap: Lặp lại ${i}: Đang tiến hành swap Mon & Monda.`, "monda");
         await new Promise(resolve => setTimeout(resolve, 1000));
       }, `Monda Swap Mon ➯ Monda`);
       if (i < loopCount) {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`MondaSwap: Cycle Ke ${i} Selesai`, "monda");
-        addLog(`MondaSwap: Menunggu ${minutes} menit ${seconds} detik sebelum transaksi berikutnya...`, "monda");
+        addLog(`MondaSwap: Cycle Ke ${i} hoàn thành`, "monda");
+        addLog(`MondaSwap: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "monda");
         await waitWithCancel(delay, "monda");
         if (mondaSwapCancelled) {
-          addLog("Monda: Auto swap dihentikan saat waktu tunggu.", "monda");
+          addLog("Monda: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "monda");
           break;
         }
       }
@@ -1864,28 +1864,28 @@ async function runMondaSwapMonMonda() {
     mainMenu.setItems(getMainMenuItems());
     mondaSubMenu.setItems(getMondaMenuItems());
     screen.render();
-    addLog("MondaSwap: Auto swap Mon & Monda selesai.", "monda");
+    addLog("MondaSwap: Tự động hoán đổi Mon & Monda hoàn thành.", "monda");
     mondaSubMenu.focus();
   });
 }
 
 async function runBubbleFiAutoSwap() {
   promptBox.setFront();
-  promptBox.readInput("Masukkan jumlah swap BubbleFi:", "", async (err, value) => {
+  promptBox.readInput("Nhập số token swap BubbleFi:", "", async (err, value) => {
     promptBox.hide();
     screen.render();
     if (err || !value) {
-      addLog("BubbleFi: Input tidak valid atau dibatalkan.", "bubblefi");
+      addLog("BubbleFi: Đầu vào không hợp lệ hoặc bị hủy.", "bubblefi");
       return;
     }
     const loopCount = parseInt(value);
     if (isNaN(loopCount) || loopCount <= 0) {
-      addLog("BubbleFi: Input tidak valid. Harus berupa angka positif.", "bubblefi");
+      addLog("BubbleFi: Đầu vào không hợp lệ. Phải là một con số positif.", "bubblefi");
       return;
     }
-    addLog(`BubbleFi: Anda memasukkan ${loopCount} kali swap BubbleFi.`, "bubblefi");
+    addLog(`BubbleFi: Bạn đã nhập ${loopCount} thời gian swap BubbleFi.`, "bubblefi");
     if (bubbleFiSwapRunning) {
-      addLog("BubbleFi: Transaksi sudah berjalan. Silahkan stop transaksi terlebih dahulu.", "bubblefi");
+      addLog("BubbleFi: Giao dịch đang chạy. Vui lòng stop Giao dịch Đầu tiên.", "bubblefi");
       return;
     }
     bubbleFiSwapRunning = true;
@@ -1906,9 +1906,9 @@ async function runBubbleFiAutoSwap() {
         }
       });
       userId = sessionResponse.data.user.id;
-      addLog(`BubbleFi: Diperoleh session untuk user id ${userId}`, "bubblefi");
+      addLog(`BubbleFi: Diperoleh session vì user id ${userId}`, "bubblefi");
     } catch (error) {
-      addLog(`BubbleFi: Gagal mendapatkan session: ${error.message}`, "bubblefi");
+      addLog(`BubbleFi: thất bại mendapatkan session: ${error.message}`, "bubblefi");
       bubbleFiSwapRunning = false;
       return;
     }
@@ -1936,11 +1936,11 @@ async function runBubbleFiAutoSwap() {
       const fromTokenContract = new ethers.Contract(fromToken.address, ERC20_ABI, globalWallet.provider);
       const balance = await fromTokenContract.balanceOf(globalWallet.address);
       if (balance < amountToSwap) {
-        addLog(`BubbleFi:  Saldo ${fromToken.name} (${ethers.formatUnits(balance, 18)}) tidak mencukupi untuk swap ${ethers.formatUnits(amountToSwap, 18)}. Melewati iterasi ini.`, "bubblefi");
+        addLog(`BubbleFi:  Cân bằng ${fromToken.name} (${ethers.formatUnits(balance, 18)}) không đủ vì swap ${ethers.formatUnits(amountToSwap, 18)}. Melewati Lặp lại ini.`, "bubblefi");
         continue;
       }
 
-      addLog(`BubbleFi: Swap ${fromToken.name} ➯ ${toToken.name} dengan jumlah ${ethers.formatUnits(amountToSwap, 18)}`, "bubblefi");
+      addLog(`BubbleFi: Swap ${fromToken.name} ➯ ${toToken.name} với số lượng ${ethers.formatUnits(amountToSwap, 18)}`, "bubblefi");
 
       await addTransactionToQueue(async (nonce) => {
         const fromTokenContractApprove = new ethers.Contract(fromToken.address, ERC20_ABI_APPROVE, globalWallet);
@@ -1950,7 +1950,7 @@ async function runBubbleFiAutoSwap() {
           const approveTx = await fromTokenContractApprove.approve(BUBBLEFI_ROUTER_ADDRESS, ethers.MaxUint256, { nonce });
           addLog(`BubbleFi: Tx approval ${fromToken.name} dikirim: ${getShortHash(approveTx.hash)}`, "bubblefi");
           await approveTx.wait();
-          addLog(`BubbleFi: Approval ${fromToken.name} berhasil.`, "bubblefi");
+          addLog(`BubbleFi: Approval ${fromToken.name} thành công.`, "bubblefi");
         }
         const bubbleFiRouter = new ethers.Contract(BUBBLEFI_ROUTER_ADDRESS, BUBBLEFI_ROUTER_ABI, globalWallet);
         const swapPath = [fromToken.address, toToken.address];
@@ -1958,7 +1958,7 @@ async function runBubbleFiAutoSwap() {
         try {
           estimatedAmounts = await bubbleFiRouter.getAmountsOut(amountToSwap, swapPath);
         } catch (error) {
-          addLog(`BubbleFi: getAmountsOut gagal: ${error.message}`, "bubblefi");
+          addLog(`BubbleFi: getAmountsOut thất bại: ${error.message}`, "bubblefi");
           return;
         }
         const outputEstimated = estimatedAmounts[estimatedAmounts.length - 1];
@@ -1968,7 +1968,7 @@ async function runBubbleFiAutoSwap() {
         }
         const amountOutMin = outputEstimated * 997n / 1000n;
         const deadline = Math.floor(Date.now() / 1000) + 300;
-        addLog(`BubbleFi: Mulai swap ${fromToken.name} ➯ ${toToken.name} dengan jumlah ${ethers.formatUnits(amountToSwap, 18)}`, "bubblefi");
+        addLog(`BubbleFi: Bắt đầu swap ${fromToken.name} ➯ ${toToken.name} với số lượng ${ethers.formatUnits(amountToSwap, 18)}`, "bubblefi");
         const raffleParam = {
           enter: false,
           fractionOfSwapAmount: { numerator: 0, denominator: 0 },
@@ -2007,20 +2007,20 @@ async function runBubbleFiAutoSwap() {
           const { pointsAwarded, totalPoints } = postResponse.data;
           addLog(`BubbleFi: Points Awarded: Points = ${pointsAwarded}, Total Points = ${totalPoints}`, "bubblefi");
           await updateWalletData();
-          addLog(`BubbleFi: Swap ${fromToken.name} ➯ ${toToken.name} selesai.`, "bubblefi");
+          addLog(`BubbleFi: Swap ${fromToken.name} ➯ ${toToken.name} hoàn thành.`, "bubblefi");
         } catch (postError) {
-          addLog(`BubbleFi: Gagal memproses points: ${postError.message}`, "bubblefi");
+          addLog(`BubbleFi: thất bại memproses points: ${postError.message}`, "bubblefi");
         }
       }, `BubbleFi Swap ${fromToken.name} ➯ ${toToken.name}`);
       if (i < loopCount) {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`BubbleFiSwap: Cycle Ke ${i} Selesai`, "bubblefi");
-        addLog(`BubbleFiSwap: Menunggu ${minutes} menit ${seconds} detik sebelum transaksi berikutnya...`, "bubblefi");
+        addLog(`BubbleFiSwap: Cycle Ke ${i} hoàn thành`, "bubblefi");
+        addLog(`BubbleFiSwap: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "bubblefi");
         await waitWithCancel(delay, "bubblefi");
         if (bubbleFiSwapCancelled) {
-          addLog("BubbleFi: Auto swap dihentikan saat waktu tunggu.", "bubblefi");
+          addLog("BubbleFi: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "bubblefi");
           break;
         } 
       }
@@ -2029,7 +2029,7 @@ async function runBubbleFiAutoSwap() {
     bubbleFiSubMenu.setItems(getBubbleFiMenuItems());
     mainMenu.setItems(getMainMenuItems());
     screen.render();
-    addLog("BubbleFi: Auto swap selesai.", "bubblefi");
+    addLog("BubbleFi: Tự động hoán đổi hoàn thành.", "bubblefi");
   });
 }
 
@@ -2068,9 +2068,9 @@ mainMenu.on("select", (item) => {
       bubbleFiSubMenu.focus();
       screen.render();
     }, 100);
-  }  else if (selected === "Antrian Transaksi") {
+  }  else if (selected === "Antrian Giao dịch") {
     showTransactionQueueMenu();
-  } else if (selected === "Clear Transaction Logs") {
+  } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
   } else if (selected === "Refresh") {
     updateWalletData();
@@ -2084,16 +2084,16 @@ mainMenu.on("select", (item) => {
 });
 rubicSubMenu.on("select", (item) => {
   const selected = item.getText();
-  if (selected === "Auto Swap Mon & WMON") {
+  if (selected === "Tự động hoán đổi Mon & WMON") {
     runAutoSwap();
-  } else if (selected === "Stop Transaction") {
+  } else if (selected === "Dừng giao dịch") {
     if (autoSwapRunning) {
       autoSwapCancelled = true;
-      addLog("Rubic: Perintah Stop Transaction diterima.", "rubic");
+      addLog("Rubic: Yêu cầu Dừng giao dịch diterima.", "rubic");
     } else {
-      addLog("Rubic: Tidak ada transaksi yang berjalan.", "rubic");
+      addLog("Rubic: Không có bất kỳ Giao dịch nào đang hoạt động.", "rubic");
     }
-  } else if (selected === "Clear Transaction Logs") {
+  } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
   } else if (selected === "Back To Main Menu") {
     rubicSubMenu.hide();
@@ -2113,18 +2113,18 @@ function showTayaSubMenu() {
 }
 tayaSubMenu.on("select", (item) => {
   const selected = item.getText();
-  if (selected === "Auto Swap Random Token") {
+  if (selected === "Tự động hoán đổi Random Token") {
     runTayaAutoSwapRandom();
-  } else if (selected === "Auto Swap MON & WMON") {
+  } else if (selected === "Tự động hoán đổi MON & WMON") {
     runTayaWrapCycle();
-  } else if (selected === "Stop Transaction") {
+  } else if (selected === "Dừng giao dịch") {
     if (tayaSwapRunning) {
       tayaSwapCancelled = true;
-      addLog("Taya: Perintah Stop Transaction diterima.", "taya");
+      addLog("Taya: Yêu cầu Dừng giao dịch diterima.", "taya");
     } else {
-      addLog("Taya: Tidak ada transaksi yang berjalan.", "taya");
+      addLog("Taya: Không có bất kỳ Giao dịch nào đang hoạt động.", "taya");
     }
-  } else if (selected === "Clear Transaction Logs") {
+  } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
   } else if (selected === "Back To Main Menu") {
     tayaSubMenu.hide();
@@ -2144,18 +2144,18 @@ function showHedgemonySubMenu() {
 }
 hedgemonySubMenu.on("select", (item) => {
   const selected = item.getText();
-  if (selected === "Auto Swap Mon & WMON") {
+  if (selected === "Tự động hoán đổi Mon & WMON") {
     runHedgemonySwap();
-  } else if (selected === "Auto Swap Mon & HEDGE") {
+  } else if (selected === "Tự động hoán đổi Mon & HEDGE") {
     runHedgeSwap();
-  } else if (selected === "Stop Transaction") {
+  } else if (selected === "Dừng giao dịch") {
     if (hedgemonySwapRunning) {
       hedgemonySwapCancelled = true;
-      addLog("Hedgemony: Perintah Stop Transaction diterima.", "hedgemony");
+      addLog("Hedgemony: Yêu cầu Dừng giao dịch diterima.", "hedgemony");
     } else {
-      addLog("Hedgemony: Tidak ada transaksi yang berjalan.", "hedgemony");
+      addLog("Hedgemony: Không có bất kỳ Giao dịch nào đang hoạt động.", "hedgemony");
     }
-  } else if (selected === "Clear Transaction Logs") {
+  } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
   } else if (selected === "Back To Main Menu") {
     hedgemonySubMenu.hide();
@@ -2169,22 +2169,22 @@ hedgemonySubMenu.on("select", (item) => {
 
 mondaSubMenu.on("select", (item) => {
   const selected = item.getText();
-  if (selected === "Auto Swap Mon & Dak") {
+  if (selected === "Tự động hoán đổi Mon & Dak") {
     runMondaSwapMonDak();
-  } else if (selected === "Auto Swap Mon & USDC/USDT") {
+  } else if (selected === "Tự động hoán đổi Mon & USDC/USDT") {
     runMondaSwapMonUsdcUsdt();
-  } else if (selected === "Auto Swap Mon & Monda") {
-    addLog("MondaSwap: Fitur Auto Swap Mon & Monda coming soon.", "monda");
+  } else if (selected === "Tự động hoán đổi Mon & Monda") {
+    addLog("MondaSwap: Fitur Tự động hoán đổi Mon & Monda coming soon.", "monda");
     mondaSubMenu.focus();
     return;
-  } else if (selected === "Stop Transaction") {
+  } else if (selected === "Dừng giao dịch") {
     if (mondaSwapRunning) {
       mondaSwapCancelled = true;
-      addLog("MondaSwap: Perintah Stop Transaction diterima.", "monda");
+      addLog("MondaSwap: Yêu cầu Dừng giao dịch diterima.", "monda");
     } else {
-      addLog("MondaSwap: Tidak ada transaksi yang berjalan.", "monda");
+      addLog("MondaSwap: Không có bất kỳ Giao dịch nào đang hoạt động.", "monda");
     }
-  } else if (selected === "Clear Transaction Logs") {
+  } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
   } else if (selected === "Back To Main Menu") {
     mondaSubMenu.hide();
@@ -2200,16 +2200,16 @@ mondaSubMenu.on("select", (item) => {
 
 bubbleFiSubMenu.on("select", (item) => {
     const selected = item.getText();
-    if (selected === "Auto Swap Pepe & Mldk & Myk") {
+    if (selected === "Tự động hoán đổi Pepe & Mldk & Myk") {
       runBubbleFiAutoSwap();
-    } else if (selected === "Stop Transaction") {
+    } else if (selected === "Dừng giao dịch") {
       if (bubbleFiSwapRunning) {
         bubbleFiSwapCancelled = true;
-        addLog("BubbleFiSwap: Perintah Stop Transaction diterima.", "bubblefi");
+        addLog("BubbleFiSwap: Yêu cầu Dừng giao dịch diterima.", "bubblefi");
       } else {
-        addLog("BubbleFiSwap: Tidak ada transaksi yang berjalan.", "bubblefi");
+        addLog("BubbleFiSwap: Không có bất kỳ Giao dịch nào đang hoạt động.", "bubblefi");
       }
-    } else if (selected === "Clear Transaction Logs") {
+    } else if (selected === "Xóa Nhật ký giao dịch") {
       clearTransactionLogs();
     } else if (selected === "Back To Main Menu") {
       bubbleFiSubMenu.hide();
