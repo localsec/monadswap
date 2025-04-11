@@ -369,28 +369,28 @@ function stopAllTransactions() {
 
 function getRubicMenuItems() {
   return autoSwapRunning
-    ? ["Tự động hoán đổi Mon & WMON", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
-    : ["Tự động hoán đổi Mon & WMON", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
+    ? ["Tự động hoán đổi Mon & WMON", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"]
+    : ["Tự động hoán đổi Mon & WMON", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"];
 }
 function getTayaMenuItems() {
   return tayaSwapRunning
-    ? ["Tự động hoán đổi Random Token", "Tự động hoán đổi MON & WMON", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
-    : ["Tự động hoán đổi Random Token", "Tự động hoán đổi MON & WMON", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
+    ? ["Tự động hoán đổi Random Token", "Tự động hoán đổi MON & WMON", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"]
+    : ["Tự động hoán đổi Random Token", "Tự động hoán đổi MON & WMON", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"];
 }
 function getHedgemonyMenuItems() {
   return hedgemonySwapRunning
-    ? ["Tự động hoán đổi Mon & WMON", "Tự động hoán đổi Mon & HEDGE", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
-    : ["Tự động hoán đổi Mon & WMON", "Tự động hoán đổi Mon & HEDGE", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
+    ? ["Tự động hoán đổi Mon & WMON", "Tự động hoán đổi Mon & HEDGE", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"]
+    : ["Tự động hoán đổi Mon & WMON", "Tự động hoán đổi Mon & HEDGE", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"];
 }
 function getMondaMenuItems() {
     return mondaSwapRunning
-      ? ["Tự động hoán đổi Mon & Dak", "Tự động hoán đổi Mon & USDC/USDT", "{grey-fg}Tự động hoán đổi Mon & Monda [COMING SOON]{/grey-fg}", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
-      : ["Tự động hoán đổi Mon & Dak", "Tự động hoán đổi Mon & USDC/USDT", "{grey-fg}Tự động hoán đổi Mon & Monda [COMING SOON]{/grey-fg}", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
+      ? ["Tự động hoán đổi Mon & Dak", "Tự động hoán đổi Mon & USDC/USDT", "{grey-fg}Tự động hoán đổi Mon & Monda [COMING SOON]{/grey-fg}", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"]
+      : ["Tự động hoán đổi Mon & Dak", "Tự động hoán đổi Mon & USDC/USDT", "{grey-fg}Tự động hoán đổi Mon & Monda [COMING SOON]{/grey-fg}", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"];
   }
 function getBubbleFiMenuItems() {
     return bubbleFiSwapRunning
-      ? ["Tự động hoán đổi Pepe & Mldk & Myk", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"]
-      : ["Tự động hoán đổi Pepe & Mldk & Myk", "Xóa Nhật ký giao dịch", "Back To Main Menu", "Exit"];
+      ? ["Tự động hoán đổi Pepe & Mldk & Myk", "Dừng giao dịch", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"]
+      : ["Tự động hoán đổi Pepe & Mldk & Myk", "Xóa Nhật ký giao dịch", "Quay lại Menu chính", "Exit"];
   }
 
 
@@ -2095,7 +2095,7 @@ rubicSubMenu.on("select", (item) => {
     }
   } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
-  } else if (selected === "Back To Main Menu") {
+  } else if (selected === "Quay lại Menu chính") {
     rubicSubMenu.hide();
     mainMenu.show();
     mainMenu.focus();
@@ -2126,7 +2126,7 @@ tayaSubMenu.on("select", (item) => {
     }
   } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
-  } else if (selected === "Back To Main Menu") {
+  } else if (selected === "Quay lại Menu chính") {
     tayaSubMenu.hide();
     mainMenu.show();
     mainMenu.focus();
@@ -2157,7 +2157,7 @@ hedgemonySubMenu.on("select", (item) => {
     }
   } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
-  } else if (selected === "Back To Main Menu") {
+  } else if (selected === "Quay lại Menu chính") {
     hedgemonySubMenu.hide();
     mainMenu.show();
     mainMenu.focus();
@@ -2186,7 +2186,7 @@ mondaSubMenu.on("select", (item) => {
     }
   } else if (selected === "Xóa Nhật ký giao dịch") {
     clearTransactionLogs();
-  } else if (selected === "Back To Main Menu") {
+  } else if (selected === "Quay lại Menu chính") {
     mondaSubMenu.hide();
     mainMenu.show();
     setTimeout(() => {
@@ -2211,7 +2211,7 @@ bubbleFiSubMenu.on("select", (item) => {
       }
     } else if (selected === "Xóa Nhật ký giao dịch") {
       clearTransactionLogs();
-    } else if (selected === "Back To Main Menu") {
+    } else if (selected === "Quay lại Menu chính") {
       bubbleFiSubMenu.hide();
       mainMenu.show();
       setTimeout(() => {
