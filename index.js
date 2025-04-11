@@ -919,7 +919,7 @@ async function runAutoSwap() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Rubic: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "rubic");
+        addLog(`Rubic: Chờ  ${minutes} phút ${seconds} giây trước Giao dịch Kế tiếp...`, "rubic");
         await waitWithCancel(delay, "rubic");
         if (autoSwapCancelled) {
           addLog("Rubic: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "rubic");
@@ -1065,7 +1065,7 @@ async function runTayaAutoSwapRandom() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Taya: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "taya");
+        addLog(`Taya: Chờ  ${minutes} phút ${seconds} giây trước Giao dịch Kế tiếp...`, "taya");
         await waitWithCancel(delay, "taya");
         if (tayaSwapCancelled) {
           addLog("Taya: Tự động hoán đổi (Random Token) dừng lại trong thời gian chờ đợi.", "taya");
@@ -1162,7 +1162,7 @@ async function runTayaWrapCycle() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Taya: Chờ  ${minutes} phút ${seconds} vài giây trước cycle Kế tiếp...`, "taya");
+        addLog(`Taya: Chờ  ${minutes} phút ${seconds} giây trước cycle Kế tiếp...`, "taya");
         await waitWithCancel(delay, "taya");
         if (tayaSwapCancelled) {
           addLog("Taya: Cycle swap dừng lại trong thời gian chờ đợi.", "taya");
@@ -1398,7 +1398,7 @@ async function runHedgeSwap() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`Hedge Swap: Chờ  ${minutes} phút ${seconds} vài giây trước cycle Kế tiếp...`, "hedgemony");
+        addLog(`Hedge Swap: Chờ  ${minutes} phút ${seconds} giây trước cycle Kế tiếp...`, "hedgemony");
         await waitWithCancel(delay, "hedgemony");
         if (hedgemonySwapCancelled) {
           addLog("Hedge Swap: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "hedgemony");
@@ -1531,7 +1531,7 @@ async function runHedgemonySwap() {
         const delay = getRandomDelay();
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
-        addLog(`HedgemonySwap: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "hedgemony");
+        addLog(`HedgemonySwap: Chờ  ${minutes} phút ${seconds} giây trước Giao dịch Kế tiếp...`, "hedgemony");
         await waitWithCancel(delay, "hedgemony");
         if (hedgemonySwapCancelled) {
           addLog("Hedgemony: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "hedgemony");
@@ -1663,7 +1663,7 @@ async function runMondaSwapMonDak() {
           const minutes = Math.floor(delay / 60000);
           const seconds = Math.floor((delay % 60000) / 1000);
           addLog(`MondaSwap:Cycle Ke ${i} hoàn thành`);
-          addLog(`MondaSwap: Chờ  ${minutes} phút ${seconds} vài giây trước cycle Kế tiếp...`, "monda");
+          addLog(`MondaSwap: Chờ  ${minutes} phút ${seconds} giây trước cycle Kế tiếp...`, "monda");
           await waitWithCancel(delay, "monda");
           if (mondaSwapCancelled) {
             addLog(`Monda: Tự động hoán đổi dừng lại trong thời gian chờ đợi.`, "monda");
@@ -1792,7 +1792,7 @@ async function runMondaSwapMonUsdcUsdt() {
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
         addLog(`Monda: Cycle Ke ${i} hoàn thành`);
-        addLog(`Monda: Chờ  ${minutes} phút ${seconds} vài giây trước cycle Kế tiếp...`, "monda");
+        addLog(`Monda: Chờ  ${minutes} phút ${seconds} giây trước cycle Kế tiếp...`, "monda");
         await waitWithCancel(delay, "monda");
         if (mondaSwapCancelled) {
           addLog(`Monda: Tự động hoán đổi dừng lại trong thời gian chờ đợi.`, "monda");
@@ -1852,7 +1852,7 @@ async function runMondaSwapMonMonda() {
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
         addLog(`MondaSwap: Cycle Ke ${i} hoàn thành`, "monda");
-        addLog(`MondaSwap: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "monda");
+        addLog(`MondaSwap: Chờ  ${minutes} phút ${seconds} giây trước Giao dịch Kế tiếp...`, "monda");
         await waitWithCancel(delay, "monda");
         if (mondaSwapCancelled) {
           addLog("Monda: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "monda");
@@ -2017,7 +2017,7 @@ async function runBubbleFiAutoSwap() {
         const minutes = Math.floor(delay / 60000);
         const seconds = Math.floor((delay % 60000) / 1000);
         addLog(`BubbleFiSwap: Cycle Ke ${i} hoàn thành`, "bubblefi");
-        addLog(`BubbleFiSwap: Chờ  ${minutes} phút ${seconds} vài giây trước Giao dịch Kế tiếp...`, "bubblefi");
+        addLog(`BubbleFiSwap: Chờ  ${minutes} phút ${seconds} giây trước Giao dịch Kế tiếp...`, "bubblefi");
         await waitWithCancel(delay, "bubblefi");
         if (bubbleFiSwapCancelled) {
           addLog("BubbleFi: Tự động hoán đổi dừng lại trong thời gian chờ đợi.", "bubblefi");
